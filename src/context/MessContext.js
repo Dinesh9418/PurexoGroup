@@ -1,93 +1,116 @@
 import React, { createContext, useContext, useState } from "react";
 
 const MessContext = createContext();
-
 export const useMessContext = () => useContext(MessContext);
+
+const TODAY = new Date();
+const toStr = (d) => d.toISOString().split("T")[0];
+const addDays = (date, days) => {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+};
+
+// Helper: generate start/end from a given start date
+const makeRange = (startDate) => ({
+  startDate: toStr(startDate),
+  endDate: toStr(addDays(startDate, 30)),
+});
 
 const initialStudents = [
   {
     id: "MSS-2601",
     name: "Arjun Rane",
     initials: "AR",
-    address: "Room 12",
+    room: "Room 12",
     plan: "both",
     avatar: "teal",
-    startDate: "2026-05-01",
-    endDate: "2026-05-31",
-    paid: true,
     bioRegistered: true,
     phone: "9876543210",
     email: "arjun@example.com",
+    ...makeRange(new Date("2026-05-01")),
+    paidAmount: 3200,
+    paymentHistory: [
+      { amount: 3200, date: "2026-05-01", note: "Full payment" },
+    ],
   },
   {
     id: "MSS-2602",
     name: "Priya Shah",
     initials: "PS",
-    address: "Room 7",
+    room: "Room 7",
     plan: "lunch",
     avatar: "blue",
-    startDate: "2026-05-01",
-    endDate: "2026-05-31",
-    paid: true,
     bioRegistered: true,
     phone: "9876543211",
     email: "priya@example.com",
+    ...makeRange(new Date("2026-05-01")),
+    paidAmount: 1000,
+    paymentHistory: [
+      { amount: 1000, date: "2026-05-01", note: "Partial payment" },
+    ],
   },
   {
     id: "MSS-2603",
     name: "Rohit Kulkarni",
     initials: "RK",
-    address: "Room 3",
+    room: "Room 3",
     plan: "both",
     avatar: "coral",
-    startDate: "2026-05-01",
-    endDate: "2026-05-31",
-    paid: false,
     bioRegistered: true,
     phone: "9876543212",
     email: "rohit@example.com",
+    ...makeRange(new Date("2026-05-01")),
+    paidAmount: 2000,
+    paymentHistory: [
+      { amount: 2000, date: "2026-05-05", note: "Partial payment" },
+    ],
   },
   {
     id: "MSS-2604",
     name: "Neha Patil",
     initials: "NP",
-    address: "Room 19",
+    room: "Room 19",
     plan: "dinner",
     avatar: "purple",
-    startDate: "2026-04-15",
-    endDate: "2026-05-27",
-    paid: false,
     bioRegistered: true,
     phone: "9876543213",
     email: "neha@example.com",
+    ...makeRange(new Date("2026-05-10")),
+    paidAmount: 0,
+    paymentHistory: [],
   },
   {
     id: "MSS-2605",
     name: "Saurabh Mane",
     initials: "SM",
-    address: "Room 5",
+    room: "Room 5",
     plan: "both",
     avatar: "amber",
-    startDate: "2026-05-01",
-    endDate: "2026-05-31",
-    paid: true,
     bioRegistered: false,
     phone: "9876543214",
     email: "saurabh@example.com",
+    ...makeRange(new Date("2026-05-01")),
+    paidAmount: 3200,
+    paymentHistory: [
+      { amount: 3200, date: "2026-05-01", note: "Full payment" },
+    ],
   },
   {
     id: "MSS-2606",
     name: "Anjali Desai",
     initials: "AD",
-    address: "Room 11",
+    room: "Room 11",
     plan: "lunch",
     avatar: "teal",
-    startDate: "2026-05-01",
-    endDate: "2026-05-31",
-    paid: true,
     bioRegistered: true,
     phone: "9876543215",
     email: "anjali@example.com",
+    ...makeRange(new Date("2026-05-01")),
+    paidAmount: 500,
+    paymentHistory: [
+      { amount: 500, date: "2026-05-03", note: "Partial payment" },
+    ],
   },
 ];
 
@@ -100,7 +123,7 @@ const initialAttendance = [
     avatar: "teal",
     meal: "Lunch",
     time: "12:03 PM",
-    date: "2026-05-26",
+    date: toStr(TODAY),
     method: "biometric",
   },
   {
@@ -111,7 +134,7 @@ const initialAttendance = [
     avatar: "blue",
     meal: "Lunch",
     time: "12:07 PM",
-    date: "2026-05-26",
+    date: toStr(TODAY),
     method: "biometric",
   },
   {
@@ -122,7 +145,7 @@ const initialAttendance = [
     avatar: "coral",
     meal: "Lunch",
     time: "12:14 PM",
-    date: "2026-05-26",
+    date: toStr(TODAY),
     method: "biometric",
   },
   {
@@ -133,7 +156,7 @@ const initialAttendance = [
     avatar: "purple",
     meal: "Lunch",
     time: "12:19 PM",
-    date: "2026-05-26",
+    date: toStr(TODAY),
     method: "biometric",
   },
   {
@@ -144,7 +167,7 @@ const initialAttendance = [
     avatar: "teal",
     meal: "Dinner",
     time: "07:38 PM",
-    date: "2026-05-25",
+    date: toStr(addDays(TODAY, -1)),
     method: "biometric",
   },
   {
@@ -155,7 +178,7 @@ const initialAttendance = [
     avatar: "teal",
     meal: "Dinner",
     time: "07:51 PM",
-    date: "2026-05-25",
+    date: toStr(addDays(TODAY, -1)),
     method: "biometric",
   },
 ];
@@ -175,12 +198,26 @@ export const MessProvider = ({ children }) => {
   const getPlanPrice = (plan) => PLAN_PRICE[plan] || 0;
   const getPlanLabel = (plan) => PLAN_LABEL[plan] || plan;
 
+  // Always use real today
   const getDaysLeft = (endDate) => {
-    const today = new Date("2026-05-26");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const end = new Date(endDate);
     return Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)));
   };
 
+  // Derived payment fields
+  const getPaymentStatus = (s) => {
+    const total = getPlanPrice(s.plan);
+    const paid = s.paidAmount || 0;
+    if (paid >= total) return "paid";
+    if (paid > 0) return "partial";
+    return "unpaid";
+  };
+  const getRemaining = (s) =>
+    Math.max(0, getPlanPrice(s.plan) - (s.paidAmount || 0));
+
+  // Add student — start date = today, end = today + 30 days
   const addStudent = (student) => {
     const newId = `MSS-${2600 + students.length + 1}`;
     const initials = student.name
@@ -191,6 +228,7 @@ export const MessProvider = ({ children }) => {
       .slice(0, 2);
     const avatars = ["teal", "blue", "coral", "purple", "amber"];
     const avatar = avatars[students.length % avatars.length];
+    const start = student.startDate ? new Date(student.startDate) : new Date();
     setStudents((prev) => [
       ...prev,
       {
@@ -199,7 +237,10 @@ export const MessProvider = ({ children }) => {
         initials,
         avatar,
         bioRegistered: false,
-        paid: false,
+        paidAmount: 0,
+        paymentHistory: [],
+        startDate: toStr(start),
+        endDate: toStr(addDays(start, 30)),
       },
     ]);
   };
@@ -214,23 +255,35 @@ export const MessProvider = ({ children }) => {
     setStudents((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const markPayment = (id) => {
+  // Add a partial or full payment
+  const addPayment = (id, amount, note = "") => {
     setStudents((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, paid: true } : s)),
+      prev.map((s) => {
+        if (s.id !== id) return s;
+        const total = getPlanPrice(s.plan);
+        const newPaid = Math.min(total, (s.paidAmount || 0) + Number(amount));
+        const entry = {
+          amount: Number(amount),
+          date: toStr(new Date()),
+          note: note || "Payment received",
+        };
+        return {
+          ...s,
+          paidAmount: newPaid,
+          paymentHistory: [...(s.paymentHistory || []), entry],
+        };
+      }),
     );
   };
 
-  const registerBiometric = (id) => {
+  const registerBiometric = (id) =>
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, bioRegistered: true } : s)),
     );
-  };
-
-  const removeBiometric = (id) => {
+  const removeBiometric = (id) =>
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, bioRegistered: false } : s)),
     );
-  };
 
   const addAttendanceEntry = (entry) => {
     setAttendance((prev) => [{ ...entry, id: Date.now() }, ...prev]);
@@ -238,13 +291,14 @@ export const MessProvider = ({ children }) => {
 
   const stats = {
     total: students.length,
-    paid: students.filter((s) => s.paid).length,
-    pending: students.filter((s) => !s.paid).length,
+    fullyPaid: students.filter((s) => getPaymentStatus(s) === "paid").length,
+    partialPaid: students.filter((s) => getPaymentStatus(s) === "partial")
+      .length,
+    unpaid: students.filter((s) => getPaymentStatus(s) === "unpaid").length,
     bioRegistered: students.filter((s) => s.bioRegistered).length,
     expectedRevenue: students.reduce((sum, s) => sum + getPlanPrice(s.plan), 0),
-    collectedRevenue: students
-      .filter((s) => s.paid)
-      .reduce((sum, s) => sum + getPlanPrice(s.plan), 0),
+    collectedRevenue: students.reduce((sum, s) => sum + (s.paidAmount || 0), 0),
+    pendingRevenue: students.reduce((sum, s) => sum + getRemaining(s), 0),
     expiringSoon: students.filter((s) => getDaysLeft(s.endDate) <= 7).length,
   };
 
@@ -258,14 +312,17 @@ export const MessProvider = ({ children }) => {
         addStudent,
         updateStudent,
         deleteStudent,
-        markPayment,
+        addPayment,
         registerBiometric,
         removeBiometric,
         addAttendanceEntry,
         getPlanPrice,
         getPlanLabel,
         getDaysLeft,
+        getPaymentStatus,
+        getRemaining,
         stats,
+        TODAY: toStr(TODAY),
       }}
     >
       {children}
