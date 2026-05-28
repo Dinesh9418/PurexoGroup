@@ -8,6 +8,7 @@ import {
 import { useMessContext } from "../../context/MessContext";
 import Button from "../common/Button";
 import AddPaymentModal from "./AddPaymentModal";
+import EditStudentModal from "./EditStudentModal";
 
 export default function StudentDetail({ student }) {
   const {
@@ -20,7 +21,9 @@ export default function StudentDetail({ student }) {
     removeBiometric,
     deleteStudent,
   } = useMessContext();
+
   const [showPayModal, setShowPayModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   if (!student)
     return (
@@ -59,7 +62,7 @@ export default function StudentDetail({ student }) {
         overflowY: "auto",
       }}
     >
-      {/* Header */}
+      {/* ── Header ── */}
       <div
         style={{
           display: "flex",
@@ -76,6 +79,7 @@ export default function StudentDetail({ student }) {
           size={56}
           fontSize={18}
         />
+
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 18, fontWeight: 600, color: "#1A1917" }}>
             {student.name}
@@ -105,18 +109,31 @@ export default function StudentDetail({ student }) {
             </span>
           </div>
         </div>
-        <Button
-          variant="danger"
-          size="sm"
-          onClick={() => {
-            if (window.confirm("Delete student?")) deleteStudent(student.id);
-          }}
-        >
-          Delete
-        </Button>
+
+        {/* Edit + Delete buttons */}
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => setShowEditModal(true)}
+            style={{ display: "flex", alignItems: "center", gap: 5 }}
+          >
+            ✏️ Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={() => {
+              if (window.confirm(`Delete ${student.name}?`))
+                deleteStudent(student.id);
+            }}
+          >
+            🗑 Delete
+          </Button>
+        </div>
       </div>
 
-      {/* Info grid */}
+      {/* ── Info grid ── */}
       <div
         style={{
           display: "grid",
@@ -151,7 +168,7 @@ export default function StudentDetail({ student }) {
         ))}
       </div>
 
-      {/* Duration bar */}
+      {/* ── Duration bar ── */}
       <div style={{ marginBottom: 20 }}>
         <div
           style={{
@@ -220,7 +237,7 @@ export default function StudentDetail({ student }) {
           <PaymentBadge status={status} />
         </div>
 
-        {/* Payment progress bar */}
+        {/* Progress bar */}
         <div style={{ marginBottom: 14 }}>
           <div
             style={{
@@ -369,7 +386,7 @@ export default function StudentDetail({ student }) {
         )}
       </div>
 
-      {/* Biometric */}
+      {/* ── Biometric ── */}
       <div
         style={{
           border: "1px solid rgba(0,0,0,0.08)",
@@ -442,10 +459,17 @@ export default function StudentDetail({ student }) {
         </div>
       </div>
 
+      {/* Modals */}
       {showPayModal && (
         <AddPaymentModal
           student={student}
           onClose={() => setShowPayModal(false)}
+        />
+      )}
+      {showEditModal && (
+        <EditStudentModal
+          student={student}
+          onClose={() => setShowEditModal(false)}
         />
       )}
     </div>
