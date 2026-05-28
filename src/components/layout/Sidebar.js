@@ -46,7 +46,7 @@ export default function Sidebar() {
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1917" }}>
-              PUREXO GROUP
+              MessTracker
             </div>
             <div style={{ fontSize: 11, color: "#9E9C97" }}>
               Student mess portal
