@@ -23,11 +23,11 @@ export default function DashboardPage() {
     .sort((a, b) => getRemaining(b) - getRemaining(a))
     .slice(0, 5);
 
-  const planCounts = {
-    both: students.filter((s) => s.plan === "both").length,
-    lunch: students.filter((s) => s.plan === "lunch").length,
-    dinner: students.filter((s) => s.plan === "dinner").length,
-  };
+  // const planCounts = {
+  //   both: students.filter((s) => s.plan === "both").length,
+  //   lunch: students.filter((s) => s.plan === "lunch").length,
+  //   dinner: students.filter((s) => s.plan === "dinner").length,
+  // };
 
   const collectionPct = stats.expectedRevenue
     ? Math.round((stats.collectedRevenue / stats.expectedRevenue) * 100)
