@@ -30,6 +30,7 @@ export default function PaymentsPage() {
     if (filter === "Unpaid") return st === "unpaid";
     return true;
   });
+  console.log("Filtered students for PaymentsPage:", filtered);
 
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -179,7 +180,7 @@ export default function PaymentsPage() {
                           {s.name}
                         </div>
                         <div style={{ fontSize: 11, color: "#9E9C97" }}>
-                          {s.room}
+                          {s.userID}
                         </div>
                       </div>
                     </div>

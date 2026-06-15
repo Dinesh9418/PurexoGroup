@@ -34,6 +34,7 @@ export default function StudentCard({ student, selected, onClick }) {
         ? "◑ Partial"
         : "✗ Unpaid";
 
+  console.log("Rendering StudentCard for:", student, student.name);
   return (
     <div
       onClick={onClick}

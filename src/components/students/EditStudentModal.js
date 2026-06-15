@@ -16,7 +16,7 @@ export default function EditStudentModal({ student, onClose }) {
 
   const [form, setForm] = useState({
     name: student.name,
-    room: student.room,
+    userID: student.userID,
     plan: student.plan,
     phone: student.phone || "",
     email: student.email || "",
@@ -39,7 +39,7 @@ export default function EditStudentModal({ student, onClose }) {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "Name is required";
-    if (!form.room.trim()) e.room = "Room is required";
+    if (!form.userID.trim()) e.userID = "User ID is required";
     return e;
   };
 
@@ -108,11 +108,11 @@ export default function EditStudentModal({ student, onClose }) {
               color: "#1A1917",
             }}
           >
-            {student.id}
+            {student.userID} 
           </span>
         </div>
 
-        {/* Name + Room */}
+        {/* Name + USer ID */}
         <div
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
@@ -130,20 +130,20 @@ export default function EditStudentModal({ student, onClose }) {
               </div>
             )}
           </div>
-          <div>
-            <label style={labelStyle}>Room number *</label>
+          {/* <div>
+            <label style={labelStyle}>User ID *</label>
             <input
-              style={inputStyle(errors.room)}
-              value={form.room}
-              onChange={(e) => set("room", e.target.value)}
-              placeholder="e.g. Room 12"
+              style={inputStyle(errors.userID)}
+              value={form.userID}
+              onChange={(e) => set("userID", e.target.value)}
+              placeholder="e.g. userID123"
             />
-            {errors.room && (
+            {errors.userID && (
               <div style={{ fontSize: 11, color: "#E24B4A", marginTop: 3 }}>
-                {errors.room}
+                {errors.userID}
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Meal plan */}

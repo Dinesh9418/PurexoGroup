@@ -41,6 +41,7 @@ export default function StudentDetail({ student }) {
       </div>
     );
 
+  console.log("Rendering StudentDetail for:", student);
   const daysLeft = getDaysLeft(student.endDate);
   const barColor =
     daysLeft <= 3 ? "#E24B4A" : daysLeft <= 7 ? "#EF9F27" : "#1D9E75";
@@ -104,9 +105,9 @@ export default function StudentDetail({ student }) {
             >
               {student.id}
             </span>
-            <span style={{ fontSize: 11, color: "#9E9C97" }}>
+            {/* <span style={{ fontSize: 11, color: "#9E9C97" }}>
               {student.room}
-            </span>
+            </span> */}
           </div>
         </div>
 
