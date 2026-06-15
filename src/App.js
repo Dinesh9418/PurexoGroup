@@ -1,4 +1,5 @@
 import React from "react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { MessProvider, useMessContext } from "./context/MessContext";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
@@ -6,6 +7,7 @@ import DashboardPage from "./components/dashboard/DashboardPage";
 import StudentsPage from "./pages/StudentsPage";
 import BiometricPage from "./pages/BiometricPage";
 import PaymentsPage from "./pages/PaymentsPage";
+import LoginPage from "./components/auth/LoginPage";
 import "./assets/styles/global.css";
 
 function AppContent() {
@@ -39,10 +41,41 @@ function AppContent() {
   );
 }
 
-export default function App() {
+function AuthGate() {
+  const { user, authLoading } = useAuth();
+
+  if (authLoading) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#FAFAF8",
+          fontFamily: "var(--font-main)",
+          color: "var(--text-muted)",
+          fontSize: 14,
+        }}
+      >
+        Loading…
+      </div>
+    );
+  }
+
+  if (!user) return <LoginPage />;
+
   return (
     <MessProvider>
       <AppContent />
     </MessProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthGate />
+    </AuthProvider>
   );
 }
