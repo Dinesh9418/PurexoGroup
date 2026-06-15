@@ -16,14 +16,14 @@ export default function EditStudentModal({ student, onClose }) {
 
   const [form, setForm] = useState({
     name: student.name,
-    userID: student.userID,
+    userID: student.id,
     plan: student.plan,
     phone: student.phone || "",
     email: student.email || "",
     startDate: student.startDate,
     endDate: student.endDate,
   });
-
+  console.log("Initial form state:", form);
   const [errors, setErrors] = useState({});
 
   const set = (k, v) => {
@@ -108,7 +108,7 @@ export default function EditStudentModal({ student, onClose }) {
               color: "#1A1917",
             }}
           >
-            {student.userID} 
+            {student.id}
           </span>
         </div>
 
