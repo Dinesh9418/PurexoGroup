@@ -26,8 +26,6 @@ export default function AddStudentModal({ onClose }) {
     endDate: endStr, // auto-calculated, shown read-only
   });
 
-  console.log("AddStudentModal form state:", form);
-
   const set = (k, v) => {
     if (k === "startDate") {
       // whenever start changes, auto-set end = start + 30 days
@@ -66,141 +64,156 @@ export default function AddStudentModal({ onClose }) {
       alert("Student name is required");
       return;
     }
-    // if (!form.userID.trim()) {
-    //   alert("User ID is required");
-    //   return;
-    // }
     addStudent(form);
     onClose();
+    // alert("User added successfully");
   };
 
+  const [showAdd, setShowAdd] = useState(false);
   return (
-    <Modal title="Add new student" onClose={onClose}>
-      <div style={{ display: "grid", gap: 14 }}>
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
-          <div>
-            <label style={labelStyle}>Full name *</label>
-            <input
-              style={inputStyle}
-              value={form.name}
-              onChange={(e) => set("name", e.target.value)}
-              placeholder="e.g. Arjun Rane"
-            />
-          </div>
-
-          {/* <div>
-            <label style={labelStyle}>User ID *</label>
-            <input
-              style={inputStyle}
-              value={form.userID}
-              onChange={(e) => set("userID", e.target.value)}
-              placeholder="e.g. userID123"
-            />
-          </div> */}
-        </div>
-
-        <div>
-          <label style={labelStyle}>Meal plan *</label>
-          <select
-            style={inputStyle}
-            value={form.plan}
-            onChange={(e) => set("plan", e.target.value)}
+    <>
+      <Modal title="Add new student" onClose={onClose}>
+        <div style={{ display: "grid", gap: 14 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
-            <option value="both">Lunch + Dinner — ₹3,200 / month</option>
-            <option value="lunch">Lunch only — ₹1,800 / month</option>
-            <option value="dinner">Dinner only — ₹1,800 / month</option>
-          </select>
-        </div>
+            <div>
+              <label style={labelStyle}>Full name *</label>
+              <input
+                style={inputStyle}
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="e.g. Arjun Rane"
+              />
+            </div>
+          </div>
 
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
           <div>
-            <label style={labelStyle}>Phone</label>
-            <input
+            <label style={labelStyle}>Meal plan *</label>
+            <select
               style={inputStyle}
-              value={form.phone}
-              onChange={(e) => set("phone", e.target.value)}
-              placeholder="9876543210"
-            />
+              value={form.plan}
+              onChange={(e) => set("plan", e.target.value)}
+            >
+              <option value="both">Lunch + Dinner — ₹3,200 / month</option>
+              <option value="lunch">Lunch only — ₹1,800 / month</option>
+              <option value="dinner">Dinner only — ₹1,800 / month</option>
+            </select>
           </div>
-          <div>
-            <label style={labelStyle}>Email</label>
-            <input
-              style={inputStyle}
-              value={form.email}
-              onChange={(e) => set("email", e.target.value)}
-              placeholder="student@email.com"
-            />
-          </div>
-        </div>
 
-        {/* Date row */}
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
-          <div>
-            <label style={labelStyle}>Start date</label>
-            <input
-              type="date"
-              style={inputStyle}
-              value={form.startDate}
-              onChange={(e) => set("startDate", e.target.value)}
-            />
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
+            <div>
+              <label style={labelStyle}>Phone</label>
+              <input
+                style={inputStyle}
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                placeholder="9876543210"
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Email</label>
+              <input
+                style={inputStyle}
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                placeholder="student@email.com"
+              />
+            </div>
           </div>
-          <div>
-            <label style={labelStyle}>
-              End date
-              <span
-                style={{
-                  fontSize: 10,
-                  color: "#1D9E75",
-                  marginLeft: 6,
-                  fontWeight: 500,
-                }}
-              >
-                auto (start + 30 days)
-              </span>
-            </label>
-            <input
-              type="date"
-              style={readOnlyStyle}
-              value={form.endDate}
-              readOnly
-            />
+
+          {/* Date row */}
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
+            <div>
+              <label style={labelStyle}>Start date</label>
+              <input
+                type="date"
+                style={inputStyle}
+                value={form.startDate}
+                onChange={(e) => set("startDate", e.target.value)}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>
+                End date
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: "#1D9E75",
+                    marginLeft: 6,
+                    fontWeight: 500,
+                  }}
+                >
+                  auto (start + 30 days)
+                </span>
+              </label>
+              <input
+                type="date"
+                style={readOnlyStyle}
+                value={form.endDate}
+                readOnly
+              />
+            </div>
+          </div>
+
+          {/* Date preview */}
+          <div
+            style={{
+              background: "#E1F5EE",
+              borderRadius: 8,
+              padding: "10px 14px",
+              fontSize: 12,
+              color: "#0F6E56",
+            }}
+          >
+            📅 Mess period: <strong>{formatDate(form.startDate)}</strong> →{" "}
+            <strong>{formatDate(form.endDate)}</strong> (30 days)
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 8,
+              marginTop: 4,
+            }}
+          >
+            <Button onClick={onClose}>Cancel</Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              onClick={() => setShowAdd(true)}
+            >
+              Add student
+            </Button>
           </div>
         </div>
+      </Modal>
 
-        {/* Date preview */}
-        <div
-          style={{
-            background: "#E1F5EE",
-            borderRadius: 8,
-            padding: "10px 14px",
-            fontSize: 12,
-            color: "#0F6E56",
-          }}
-        >
-          📅 Mess period: <strong>{formatDate(form.startDate)}</strong> →{" "}
-          <strong>{formatDate(form.endDate)}</strong> (30 days)
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: 8,
-            marginTop: 4,
-          }}
-        >
-          <Button onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Add student
-          </Button>
-        </div>
-      </div>
-    </Modal>
+      {showAdd && (
+        <Modal title="Add new student" onClose={onClose}>
+          <div style={{ display: "grid", gap: 14 }}>
+            <p>{form.name}</p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 8,
+                marginTop: 4,
+              }}
+            >
+              <Button onClick={onClose}>Cancel</Button>
+              <Button variant="primary" onClick={handleSubmit}>
+                Add student
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </>
   );
 }

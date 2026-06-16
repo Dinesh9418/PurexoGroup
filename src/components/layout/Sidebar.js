@@ -4,8 +4,8 @@ import { useMessContext } from "../../context/MessContext";
 const navItems = [
   { key: "dashboard", icon: "⊞", label: "Dashboard" },
   { key: "students", icon: "◎", label: "Students & IDs" },
-  { key: "biometric", icon: "❋", label: "Biometric" },
   { key: "payments", icon: "₹", label: "Payments" },
+  { key: "biometric", icon: "❋", label: "Biometric" },
 ];
 
 export default function Sidebar() {

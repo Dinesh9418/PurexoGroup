@@ -16,8 +16,8 @@ function AppContent() {
   const pages = {
     dashboard: <DashboardPage />,
     students: <StudentsPage />,
-    biometric: <BiometricPage />,
     payments: <PaymentsPage />,
+    biometric: <BiometricPage />,
   };
 
   return (
