@@ -74,9 +74,7 @@ export default function AddStudentModal({ onClose }) {
     <>
       <Modal title="Add new student" onClose={onClose}>
         <div style={{ display: "grid", gap: 14 }}>
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
             <div>
               <label style={labelStyle}>Full name *</label>
               <input
@@ -185,8 +183,10 @@ export default function AddStudentModal({ onClose }) {
             <Button onClick={onClose}>Cancel</Button>
             <Button
               variant="primary"
-              onClick={handleSubmit}
-              onClick={() => setShowAdd(true)}
+              onClick={() => {
+                handleSubmit();
+                setShowAdd(true);
+              }}
             >
               Add student
             </Button>
