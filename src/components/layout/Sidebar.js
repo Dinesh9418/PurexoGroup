@@ -1,5 +1,6 @@
 import React from "react";
 import { useMessContext } from "../../context/MessContext";
+import PurexoLogo from "../../assets/images/Purexo-logo.png";
 
 const navItems = [
   { key: "dashboard", icon: "⊞", label: "Dashboard" },
@@ -34,7 +35,7 @@ export default function Sidebar() {
               width: 36,
               height: 36,
               borderRadius: 10,
-              background: "#1D9E75",
+              // background: "#1D9E75",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -42,11 +43,16 @@ export default function Sidebar() {
               color: "#fff",
             }}
           >
-            🍽
+            {/* 🍽 */}
+            <img
+              src={PurexoLogo}
+              alt="MessTracker"
+              style={{ width: 40, height: 30 }}
+            />
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1917" }}>
-              MessTracker
+              Purexo Group
             </div>
             <div style={{ fontSize: 11, color: "#9E9C97" }}>
               Student mess portal
