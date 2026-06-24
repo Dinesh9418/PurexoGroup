@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { MessProvider, useMessContext } from "./context/MessContext";
 import Sidebar from "./components/layout/Sidebar";
@@ -9,30 +9,30 @@ import BiometricPage from "./pages/BiometricPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import LoginPage from "./components/auth/LoginPage";
 import "./assets/styles/global.css";
+import spinner from "./assets/images/Purexo-Spinner.png";
 
 function AppContent() {
   const { activeTab } = useMessContext();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const pages = {
     dashboard: <DashboardPage />,
     students: <StudentsPage />,
-    payments: <PaymentsPage />,
     biometric: <BiometricPage />,
+    payments: <PaymentsPage />,
   };
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#FAFAF8" }}>
-      <Sidebar />
+    <div className="app-shell">
+      <Sidebar open={sidebarOpen} onNavigate={closeSidebar} />
       <div
-        style={{
-          marginLeft: 220,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
-        <Header />
+        className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`}
+        onClick={closeSidebar}
+      />
+      <div className="app-main">
+        <Header onMenuClick={() => setSidebarOpen((v) => !v)} />
         <main style={{ flex: 1, overflow: "auto" }}>
           {pages[activeTab] || <DashboardPage />}
         </main>
@@ -58,7 +58,7 @@ function AuthGate() {
           fontSize: 14,
         }}
       >
-        Loading…
+        <image src={spinner} alt="Logo" style={{ width: 40, marginLeft: 10 }} />
       </div>
     );
   }
