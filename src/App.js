@@ -9,7 +9,7 @@ import BiometricPage from "./pages/BiometricPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import LoginPage from "./components/auth/LoginPage";
 import "./assets/styles/global.css";
-import spinner from "./assets/images/Purexo-Spinner.png";
+import "./App.css";
 
 function AppContent() {
   const { activeTab } = useMessContext();
@@ -58,7 +58,7 @@ function AuthGate() {
           fontSize: 14,
         }}
       >
-        <image src={spinner} alt="Logo" style={{ width: 40, marginLeft: 10 }} />
+        <span className="loader"></span>
       </div>
     );
   }
