@@ -23,7 +23,7 @@ export default function PaymentsPage() {
   } = useMessContext();
   const [filter, setFilter] = useState("All");
   const [payTarget, setPayTarget] = useState(null); // student to pay
-  const [printData, setPrintData] = useState();
+  // const [printData, setPrintData] = useState();
   const [hover, setHover] = useState(false);
 
   const filtered = students.filter((s) => {
@@ -145,7 +145,7 @@ export default function PaymentsPage() {
                 fontSize: 12,
                 borderRadius: 6,
                 border: "1px solid rgba(0,0,0,0.09)",
-                background: "transparent",
+                // background: "transparent",
                 background: hover ? "#E1F5EE" : "transparent",
                 color: hover ? "#0F6E56" : "#6B6860",
                 cursor: "pointer",
