@@ -62,3 +62,104 @@ input, select { font-family: var(--font-main); }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ───────────────────────── RESPONSIVE LAYOUT ───────────────────────── */
+
+.app-shell { display: flex; min-height: 100vh; background: var(--bg-primary); }
+
+.app-main {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+.sidebar-overlay { display: none; }
+
+.menu-toggle { display: none; }
+
+/* Generic responsive grids used across dashboard / payments / biometric */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.page-padded { padding: 28px 32px; }
+
+/* Payments table → card list on small screens */
+.payments-table thead { display: table-header-group; }
+.payments-row-card { display: none; }
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--shadow-md);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .app-main { margin-left: 0; }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .sidebar-overlay.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 90;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-padded { padding: 16px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .header-email { display: none; }
+}
+
+@media (max-width: 900px) {
+  .students-body { flex-direction: column; }
+  .students-grid { width: 100% !important; max-height: 320px !important; }
+}
+
+@media (max-width: 600px) {
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .students-grid { grid-template-columns: 1fr !important; }
+  .filters-row { flex-wrap: wrap; }
+
+  /* Convert payments table into stacked cards */
+  .payments-table thead { display: none; }
+  .payments-table tbody tr { display: block; border-bottom: 8px solid var(--bg-primary) !important; padding: 12px 0; }
+  .payments-table tbody td { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px !important; border: none !important; }
+  .payments-table tbody td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: 1fr; }
+  .form-grid-2 { grid-template-columns: 1fr !important; }
+}

@@ -114,7 +114,7 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Name + USer ID */}
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Full name *</label>
@@ -162,7 +162,7 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Phone + Email */}
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Phone</label>
@@ -186,7 +186,7 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Start + End date */}
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Start date</label>

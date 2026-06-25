@@ -7,21 +7,22 @@ const variants = {
   dark:      { bg: '#1A1917', color: '#fff', border: 'none' },
 };
 
-export default function Button({ children, onClick, variant = 'secondary', size = 'md', style = {} }) {
+export default function Button({ children, onClick, variant = 'secondary', size = 'md', style = {}, disabled = false }) {
   const v = variants[variant] || variants.secondary;
   const pad = size === 'sm' ? '6px 12px' : '9px 18px';
   const fs = size === 'sm' ? 12 : 13;
   return (
-    <button onClick={onClick} style={{
+    <button onClick={onClick} disabled={disabled} style={{
       display: 'inline-flex', alignItems: 'center', gap: 6,
       padding: pad, fontSize: fs, fontWeight: 500,
-      borderRadius: 8, cursor: 'pointer',
+      borderRadius: 8, cursor: disabled ? 'not-allowed' : 'pointer',
       background: v.bg, color: v.color, border: v.border,
       transition: 'opacity 0.15s',
+      opacity: disabled ? 0.6 : 1,
       ...style,
     }}
-      onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      onMouseEnter={e => { if (!disabled) e.currentTarget.style.opacity = '0.85'; }}
+      onMouseLeave={e => { if (!disabled) e.currentTarget.style.opacity = '1'; }}
     >{children}</button>
   );
 }

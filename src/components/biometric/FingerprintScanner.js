@@ -12,7 +12,7 @@ export default function FingerprintScanner() {
   const [meal, setMeal] = useState('Lunch');
   const intervalRef = useRef(null);
 
-  const registered = students.filter(s => s.bioRegistered);
+  const registered = students.filter(s => s.bioRegistered && s.status !== 'inactive');
 
   const startScan = () => {
     if (state === STATES.scanning) return;

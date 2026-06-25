@@ -1,18 +1,24 @@
 import React from "react";
 import { useMessContext } from "../../context/MessContext";
-import PurexoLogo from "../../assets/images/Purexo-logo.png";
 
 const navItems = [
   { key: "dashboard", icon: "⊞", label: "Dashboard" },
   { key: "students", icon: "◎", label: "Students & IDs" },
-  { key: "payments", icon: "₹", label: "Payments" },
   { key: "biometric", icon: "❋", label: "Biometric" },
+  { key: "payments", icon: "₹", label: "Payments" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ open, onNavigate }) {
   const { activeTab, setActiveTab } = useMessContext();
+
+  const handleSelect = (key) => {
+    setActiveTab(key);
+    if (onNavigate) onNavigate();
+  };
+
   return (
     <aside
+      className={`sidebar ${open ? "open" : ""}`}
       style={{
         width: 220,
         minHeight: "100vh",
@@ -35,24 +41,20 @@ export default function Sidebar() {
               width: 36,
               height: 36,
               borderRadius: 10,
-              // background: "#1D9E75",
+              background: "#1D9E75",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: 16,
               color: "#fff",
+              flexShrink: 0,
             }}
           >
-            {/* 🍽 */}
-            <img
-              src={PurexoLogo}
-              alt="MessTracker"
-              style={{ width: 40, height: 30 }}
-            />
+            🍽
           </div>
           <div>
             <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1917" }}>
-              Purexo Group
+              MessTracker
             </div>
             <div style={{ fontSize: 11, color: "#9E9C97" }}>
               Student mess portal
@@ -65,7 +67,7 @@ export default function Sidebar() {
         {navItems.map((item) => (
           <button
             key={item.key}
-            onClick={() => setActiveTab(item.key)}
+            onClick={() => handleSelect(item.key)}
             style={{
               width: "100%",
               display: "flex",

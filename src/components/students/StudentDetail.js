@@ -9,6 +9,7 @@ import { useMessContext } from "../../context/MessContext";
 import Button from "../common/Button";
 import AddPaymentModal from "./AddPaymentModal";
 import EditStudentModal from "./EditStudentModal";
+import RenewModal from "./RenewModal";
 
 export default function StudentDetail({ student }) {
   const {
@@ -20,10 +21,12 @@ export default function StudentDetail({ student }) {
     registerBiometric,
     removeBiometric,
     deleteStudent,
+    markStudentLeft,
   } = useMessContext();
 
   const [showPayModal, setShowPayModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showRenewModal, setShowRenewModal] = useState(false);
 
   if (!student)
     return (
@@ -43,6 +46,8 @@ export default function StudentDetail({ student }) {
 
   console.log("Rendering StudentDetail for:", student);
   const daysLeft = getDaysLeft(student.endDate);
+  const isInactive = student.status === "inactive";
+  const isExpired = !isInactive && daysLeft <= 0;
   const barColor =
     daysLeft <= 3 ? "#E24B4A" : daysLeft <= 7 ? "#EF9F27" : "#1D9E75";
   const barPct = Math.min(100, Math.round(((31 - daysLeft) / 31) * 100));
@@ -134,8 +139,115 @@ export default function StudentDetail({ student }) {
         </div>
       </div>
 
+      {/* ── Renewal / inactive banner ── */}
+      {isInactive && (
+        <div
+          style={{
+            background: "#F3F2EF",
+            border: "1px solid rgba(0,0,0,0.08)",
+            borderRadius: 12,
+            padding: "16px 18px",
+            marginBottom: 20,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#1A1917" }}>
+              Student left the mess
+            </div>
+            <div style={{ fontSize: 12, color: "#9E9C97", marginTop: 2 }}>
+              {student.leftAt
+                ? `Marked as left on ${formatDate(student.leftAt)}`
+                : "Excluded from active counts, billing, and attendance"}
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            onClick={() => setShowRenewModal(true)}
+          >
+            Re-activate
+          </Button>
+        </div>
+      )}
+
+      {!isInactive && isExpired && (
+        <div
+          style={{
+            background: "#FCEBEB",
+            border: "1px solid #F09595",
+            borderRadius: 12,
+            padding: "16px 18px",
+            marginBottom: 20,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#A32D2D" }}>
+              Mess period ended
+            </div>
+            <div style={{ fontSize: 12, color: "#A32D2D", marginTop: 2, opacity: 0.85 }}>
+              Ended on {formatDate(student.endDate)}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button
+              variant="danger"
+              onClick={() => {
+                if (window.confirm(`Mark ${student.name} as left? They'll be moved to inactive — no data is deleted.`))
+                  markStudentLeft(student.id);
+              }}
+            >
+              Mark as left
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => setShowRenewModal(true)}
+            >
+              Renew mess
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!isInactive && !isExpired && daysLeft <= 7 && (
+        <div
+          style={{
+            background: "#FEF3DC",
+            border: "1px solid #FAC775",
+            borderRadius: 12,
+            padding: "14px 18px",
+            marginBottom: 20,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ fontSize: 12, color: "#854F0B", fontWeight: 500 }}>
+            Mess period ends in {daysLeft} day{daysLeft === 1 ? "" : "s"} — renew early to avoid a gap
+          </div>
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => setShowRenewModal(true)}
+          >
+            Renew now
+          </Button>
+        </div>
+      )}
+
       {/* ── Info grid ── */}
       <div
+        className="form-grid-2"
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -281,6 +393,7 @@ export default function StudentDetail({ student }) {
         </div>
 
         <div
+          className="form-grid-2"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -471,6 +584,12 @@ export default function StudentDetail({ student }) {
         <EditStudentModal
           student={student}
           onClose={() => setShowEditModal(false)}
+        />
+      )}
+      {showRenewModal && (
+        <RenewModal
+          student={student}
+          onClose={() => setShowRenewModal(false)}
         />
       )}
     </div>

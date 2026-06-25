@@ -33,13 +33,11 @@ export default function PaymentsPage() {
   console.log("Filtered students for PaymentsPage:", filtered);
 
   return (
-    <div style={{ padding: "28px 32px" }}>
+    <div className="page-padded">
       {/* Stats */}
       <div
+        className="grid-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 12,
           marginBottom: 24,
         }}
       >
@@ -86,12 +84,14 @@ export default function PaymentsPage() {
             justifyContent: "space-between",
             padding: "16px 20px",
             borderBottom: "1px solid rgba(0,0,0,0.07)",
+            flexWrap: "wrap",
+            gap: 10,
           }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 600, color: "#1A1917" }}>
             Payment records
           </h3>
-          <div style={{ display: "flex", gap: 4 }}>
+          <div className="filters-row" style={{ display: "flex", gap: 4 }}>
             {["All", "Paid", "Partial", "Unpaid"].map((f) => (
               <button
                 key={f}
@@ -114,7 +114,8 @@ export default function PaymentsPage() {
         </div>
 
         {/* Table */}
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div style={{ overflowX: "auto" }}>
+        <table className="payments-table" style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
           <thead>
             <tr style={{ background: "#F3F2EF" }}>
               {[
@@ -159,7 +160,7 @@ export default function PaymentsPage() {
                   style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
                 >
                   {/* Student */}
-                  <td style={{ padding: "12px 16px" }}>
+                  <td data-label="Student" style={{ padding: "12px 16px" }}>
                     <div
                       style={{ display: "flex", alignItems: "center", gap: 10 }}
                     >
@@ -187,7 +188,7 @@ export default function PaymentsPage() {
                   </td>
 
                   {/* ID */}
-                  <td style={{ padding: "12px 16px" }}>
+                  <td data-label="ID" style={{ padding: "12px 16px" }}>
                     <span
                       style={{
                         fontSize: 11,
@@ -204,6 +205,7 @@ export default function PaymentsPage() {
 
                   {/* Plan */}
                   <td
+                    data-label="Plan"
                     style={{
                       padding: "12px 16px",
                       fontSize: 12,
@@ -216,6 +218,7 @@ export default function PaymentsPage() {
 
                   {/* Total */}
                   <td
+                    data-label="Total Fee"
                     style={{
                       padding: "12px 16px",
                       fontSize: 13,
@@ -227,7 +230,7 @@ export default function PaymentsPage() {
                   </td>
 
                   {/* Paid + mini bar */}
-                  <td style={{ padding: "12px 16px" }}>
+                  <td data-label="Paid" style={{ padding: "12px 16px" }}>
                     <div
                       style={{
                         fontSize: 13,
@@ -260,6 +263,7 @@ export default function PaymentsPage() {
 
                   {/* Remaining */}
                   <td
+                    data-label="Remaining"
                     style={{
                       padding: "12px 16px",
                       fontSize: 13,
@@ -271,12 +275,12 @@ export default function PaymentsPage() {
                   </td>
 
                   {/* Status badge */}
-                  <td style={{ padding: "12px 16px" }}>
+                  <td data-label="Status" style={{ padding: "12px 16px" }}>
                     <PaymentBadge status={status} />
                   </td>
 
                   {/* Action */}
-                  <td style={{ padding: "12px 16px" }}>
+                  <td data-label="Action" style={{ padding: "12px 16px" }}>
                     {status !== "paid" ? (
                       <Button
                         size="sm"
@@ -294,6 +298,7 @@ export default function PaymentsPage() {
             })}
           </tbody>
         </table>
+        </div>
 
         {filtered.length === 0 && (
           <div

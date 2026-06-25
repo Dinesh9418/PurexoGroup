@@ -15,26 +15,30 @@ export default function DashboardPage() {
   } = useMessContext();
 
   const expiring = students
-    .filter((s) => getDaysLeft(s.endDate) <= 7)
+    .filter((s) => s.status !== "inactive" && getDaysLeft(s.endDate) <= 7)
     .sort((a, b) => getDaysLeft(a.endDate) - getDaysLeft(b.endDate));
 
   const pendingPayments = students
-    .filter((s) => getPaymentStatus(s) !== "paid")
+    .filter((s) => s.status !== "inactive" && getPaymentStatus(s) !== "paid")
     .sort((a, b) => getRemaining(b) - getRemaining(a))
     .slice(0, 5);
+
+  // const planCounts = {
+  //   both: students.filter((s) => s.plan === "both").length,
+  //   lunch: students.filter((s) => s.plan === "lunch").length,
+  //   dinner: students.filter((s) => s.plan === "dinner").length,
+  // };
 
   const collectionPct = stats.expectedRevenue
     ? Math.round((stats.collectedRevenue / stats.expectedRevenue) * 100)
     : 0;
 
   return (
-    <div style={{ padding: "28px 32px" }}>
+    <div className="page-padded">
       {/* Top stats */}
       <div
+        className="grid-4"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 12,
           marginBottom: 24,
         }}
       >
@@ -134,7 +138,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="grid-2">
         {/* Pending payments */}
         <div
           style={{
@@ -178,6 +182,8 @@ export default function DashboardPage() {
                       alignItems: "center",
                       justifyContent: "space-between",
                       marginBottom: 5,
+                      flexWrap: "wrap",
+                      gap: 6,
                     }}
                   >
                     <div>

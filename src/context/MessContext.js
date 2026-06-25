@@ -88,6 +88,10 @@ export const MessProvider = ({ children }) => {
   const getRemaining = (s) =>
     Math.max(0, getPlanPrice(s.plan) - (s.paidAmount || 0));
 
+  // Treat missing `status` (old records) as active, for backward compatibility
+  const isActive = (s) => s.status !== "inactive";
+  const isExpired = (s) => isActive(s) && getDaysLeft(s.endDate) <= 0;
+
   // ── FIRESTORE CRUD ─────────────────────────────────────────────────
 
   // ADD STUDENT
@@ -111,6 +115,8 @@ export const MessProvider = ({ children }) => {
       bioRegistered: false,
       paidAmount: 0,
       paymentHistory: [],
+      cycleHistory: [],
+      status: "active",
       startDate: toStr(start),
       endDate: toStr(addDays(start, 30)),
       createdAt: serverTimestamp(),
@@ -170,6 +176,53 @@ export const MessProvider = ({ children }) => {
     });
   };
 
+  // ── RENEWAL FLOW ─────────────────────────────────────────────────
+  // RENEW: archives the current cycle into cycleHistory, starts a fresh
+  // cycle on the SAME document (never creates a new student record).
+  const renewStudent = async (id, { plan, startDate } = {}) => {
+    const student = students.find((s) => s.id === id);
+    if (!student) return;
+
+    const newPlan = plan || student.plan;
+    const start = startDate ? new Date(startDate) : new Date();
+
+    const archivedCycle = {
+      plan: student.plan,
+      startDate: student.startDate,
+      endDate: student.endDate,
+      paidAmount: student.paidAmount || 0,
+      paymentHistory: student.paymentHistory || [],
+      closedAt: toStr(new Date()),
+    };
+
+    await updateDoc(doc(db, "students", student._docId), {
+      cycleHistory: [...(student.cycleHistory || []), archivedCycle],
+      plan: newPlan,
+      startDate: toStr(start),
+      endDate: toStr(addDays(start, 30)),
+      paidAmount: 0,
+      paymentHistory: [],
+      status: "active",
+    });
+  };
+
+  // MARK AS LEFT: student stops being counted as active, no data deleted
+  const markStudentLeft = async (id) => {
+    const student = students.find((s) => s.id === id);
+    if (!student) return;
+    await updateDoc(doc(db, "students", student._docId), {
+      status: "inactive",
+      leftAt: toStr(new Date()),
+    });
+  };
+
+  // REACTIVATE: brings an inactive student back, starting a fresh cycle
+  const reactivateStudent = async (id, { plan, startDate } = {}) => {
+    const student = students.find((s) => s.id === id);
+    if (!student) return;
+    await renewStudent(id, { plan, startDate });
+  };
+
   // ADD ATTENDANCE ENTRY
   const addAttendanceEntry = async (entry) => {
     await addDoc(collection(db, "attendance"), {
@@ -179,17 +232,34 @@ export const MessProvider = ({ children }) => {
   };
 
   // ── STATS (derived from realtime students) ─────────────────────────
+  const activeStudents = students.filter(isActive);
   const stats = {
-    total: students.length,
-    fullyPaid: students.filter((s) => getPaymentStatus(s) === "paid").length,
-    partialPaid: students.filter((s) => getPaymentStatus(s) === "partial")
+    total: activeStudents.length,
+    inactive: students.filter((s) => !isActive(s)).length,
+    fullyPaid: activeStudents.filter((s) => getPaymentStatus(s) === "paid")
       .length,
-    unpaid: students.filter((s) => getPaymentStatus(s) === "unpaid").length,
-    bioRegistered: students.filter((s) => s.bioRegistered).length,
-    expectedRevenue: students.reduce((sum, s) => sum + getPlanPrice(s.plan), 0),
-    collectedRevenue: students.reduce((sum, s) => sum + (s.paidAmount || 0), 0),
-    pendingRevenue: students.reduce((sum, s) => sum + getRemaining(s), 0),
-    expiringSoon: students.filter((s) => getDaysLeft(s.endDate) <= 7).length,
+    partialPaid: activeStudents.filter(
+      (s) => getPaymentStatus(s) === "partial",
+    ).length,
+    unpaid: activeStudents.filter((s) => getPaymentStatus(s) === "unpaid")
+      .length,
+    bioRegistered: activeStudents.filter((s) => s.bioRegistered).length,
+    expectedRevenue: activeStudents.reduce(
+      (sum, s) => sum + getPlanPrice(s.plan),
+      0,
+    ),
+    collectedRevenue: activeStudents.reduce(
+      (sum, s) => sum + (s.paidAmount || 0),
+      0,
+    ),
+    pendingRevenue: activeStudents.reduce(
+      (sum, s) => sum + getRemaining(s),
+      0,
+    ),
+    expiringSoon: activeStudents.filter(
+      (s) => getDaysLeft(s.endDate) <= 7 && getDaysLeft(s.endDate) > 0,
+    ).length,
+    expired: activeStudents.filter((s) => getDaysLeft(s.endDate) <= 0).length,
   };
 
   return (
@@ -207,11 +277,16 @@ export const MessProvider = ({ children }) => {
         registerBiometric,
         removeBiometric,
         addAttendanceEntry,
+        renewStudent,
+        markStudentLeft,
+        reactivateStudent,
         getPlanPrice,
         getPlanLabel,
         getDaysLeft,
         getPaymentStatus,
         getRemaining,
+        isActive,
+        isExpired,
         stats,
         TODAY: toStr(TODAY),
       }}

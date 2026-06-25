@@ -15,7 +15,7 @@ const PAGE_TITLES = {
   payments: { title: "Payments", sub: "Track fees and dues" },
 };
 
-export default function Header() {
+export default function Header({ onMenuClick }) {
   const { activeTab } = useMessContext();
   const { user, logout } = useAuth();
   const page = PAGE_TITLES[activeTab] || PAGE_TITLES.dashboard;
@@ -31,32 +31,42 @@ export default function Header() {
         borderBottom: "1px solid rgba(0,0,0,0.07)",
         display: "flex",
         alignItems: "center",
-        padding: "0 28px",
-        gap: 16,
+        padding: "0 16px 0 16px",
+        gap: 12,
         position: "sticky",
         top: 0,
         zIndex: 50,
       }}
     >
-      <div style={{ flex: 1 }}>
+      <button className="menu-toggle" onClick={onMenuClick} aria-label="Toggle menu">
+        ☰
+      </button>
+
+      <div style={{ flex: 1, minWidth: 0, paddingLeft: 4 }}>
         <h1
           style={{
             fontSize: 16,
             fontWeight: 600,
             color: "#1A1917",
             lineHeight: 1.3,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {page.title}
         </h1>
-        <p style={{ fontSize: 12, color: "#9E9C97", marginTop: 1 }}>
+        <p style={{
+          fontSize: 12, color: "#9E9C97", marginTop: 1,
+          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+        }}>
           {page.sub}
         </p>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         {/* User email */}
-        <span style={{ fontSize: 12, color: "#9E9C97" }}>{user?.email}</span>
+        <span className="header-email" style={{ fontSize: 12, color: "#9E9C97" }}>{user?.email}</span>
 
         {/* Avatar */}
         <div
@@ -95,6 +105,7 @@ export default function Header() {
             color: "#6B6860",
             fontFamily: "var(--font-main)",
             transition: "background 0.15s",
+            whiteSpace: "nowrap",
           }}
           onMouseEnter={(e) => (e.currentTarget.style.background = "#F3F2EF")}
           onMouseLeave={(e) =>

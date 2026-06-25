@@ -9,15 +9,15 @@ export default function BiometricPage() {
   const todayScans = attendance.filter(a => a.date === '2026-05-26').length;
 
   return (
-    <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 20, height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+    <div className="page-padded" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div className="grid-4">
         <StatCard label="Bio registered" value={stats.bioRegistered} icon="❋" sub={`of ${stats.total} students`} valueColor="#0F6E56" />
         <StatCard label="Today's scans" value={todayScans} icon="◉" sub="fingerprint entries" />
         <StatCard label="Meals served" value={todayScans} icon="🍽" sub="successfully logged" />
         <StatCard label="Not registered" value={stats.total - stats.bioRegistered} icon="⚠" sub="need enrollment" valueColor="#A32D2D" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, flex: 1, overflow: 'hidden' }}>
+      <div className="grid-2" style={{ flex: 1, minHeight: 360 }}>
         <FingerprintScanner />
         <AttendanceLog />
       </div>

@@ -5,7 +5,9 @@ import { useMessContext } from "../../context/MessContext";
 export default function StudentCard({ student, selected, onClick }) {
   const { getDaysLeft, getPlanPrice, getPaymentStatus, getRemaining } =
     useMessContext();
+  const isInactive = student.status === "inactive";
   const daysLeft = getDaysLeft(student.endDate);
+  const isExpired = !isInactive && daysLeft <= 0;
   const barColor =
     daysLeft <= 3 ? "#E24B4A" : daysLeft <= 7 ? "#EF9F27" : "#1D9E75";
   const barPct = Math.min(100, Math.round(((31 - daysLeft) / 31) * 100));
@@ -45,6 +47,7 @@ export default function StudentCard({ student, selected, onClick }) {
         padding: "14px 16px",
         cursor: "pointer",
         transition: "border-color 0.15s",
+        opacity: isInactive ? 0.6 : 1,
       }}
     >
       <div
@@ -80,6 +83,21 @@ export default function StudentCard({ student, selected, onClick }) {
             {student.id}
           </div>
         </div>
+        {(isInactive || isExpired) && (
+          <span
+            style={{
+              fontSize: 9,
+              fontWeight: 600,
+              padding: "2px 7px",
+              borderRadius: 5,
+              flexShrink: 0,
+              background: isInactive ? "#F3F2EF" : "#FCEBEB",
+              color: isInactive ? "#6B6860" : "#A32D2D",
+            }}
+          >
+            {isInactive ? "INACTIVE" : "EXPIRED"}
+          </span>
+        )}
       </div>
 
       <div
