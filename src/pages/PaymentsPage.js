@@ -24,6 +24,7 @@ export default function PaymentsPage() {
   const [filter, setFilter] = useState("All");
   const [payTarget, setPayTarget] = useState(null); // student to pay
   const [printData, setPrintData] = useState();
+  const [hover, setHover] = useState(false);
 
   const filtered = students.filter((s) => {
     const st = getPaymentStatus(s);
@@ -137,16 +138,20 @@ export default function PaymentsPage() {
           <div className="filters-row" style={{ display: "flex", gap: 4 }}>
             <button
               onClick={handlePrint}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
               style={{
-                padding: "5px 12px",
+                padding: "6px 12px",
                 fontSize: 12,
                 borderRadius: 6,
                 border: "1px solid rgba(0,0,0,0.09)",
                 background: "transparent",
+                background: hover ? "#E1F5EE" : "transparent",
+                color: hover ? "#0F6E56" : "#6B6860",
                 cursor: "pointer",
               }}
             >
-              Print
+              <i class="fa-solid fa-print"></i>
             </button>
             {["All", "Paid", "Partial", "Unpaid"].map((f) => (
               <button
