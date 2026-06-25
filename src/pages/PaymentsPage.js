@@ -45,8 +45,8 @@ export default function PaymentsPage() {
       const status = getPaymentStatus(s);
 
       return {
+         ID: s.id,
         Name: s.name,
-        ID: s.id,
         Plan: getPlanLabel(s.plan),
         "Total Fee": total,
         Paid: paid,

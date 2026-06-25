@@ -18,8 +18,8 @@ function AppContent() {
   const pages = {
     dashboard: <DashboardPage />,
     students: <StudentsPage />,
-    biometric: <BiometricPage />,
     payments: <PaymentsPage />,
+    biometric: <BiometricPage />,
   };
 
   const closeSidebar = () => setSidebarOpen(false);
