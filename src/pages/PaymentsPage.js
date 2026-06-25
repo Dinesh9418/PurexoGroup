@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import { useMessContext } from "../context/MessContext";
 import {
   Avatar,
@@ -21,6 +23,7 @@ export default function PaymentsPage() {
   } = useMessContext();
   const [filter, setFilter] = useState("All");
   const [payTarget, setPayTarget] = useState(null); // student to pay
+  const [printData, setPrintData] = useState();
 
   const filtered = students.filter((s) => {
     const st = getPaymentStatus(s);
@@ -32,9 +35,50 @@ export default function PaymentsPage() {
   });
   console.log("Filtered students for PaymentsPage:", filtered);
 
+  function handlePrint() {
+    // Prepare data for Excel
+    const data = filtered.map((s) => {
+      const total = getPlanPrice(s.plan);
+      const paid = s.paidAmount || 0;
+      const remaining = getRemaining(s);
+      const status = getPaymentStatus(s);
+
+      return {
+        Name: s.name,
+        ID: s.id,
+        Plan: getPlanLabel(s.plan),
+        "Total Fee": total,
+        Paid: paid,
+        Remaining: remaining,
+        Status: status,
+      };
+    });
+
+    const today = new Date();
+    const formattedDate = today
+      .toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .replace(/\//g, "-");
+
+    // Convert to worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payments");
+
+    // Export to Excel file
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `PaymentRecords-${formattedDate}.xlsx`);
+  }
   return (
     <div className="page-padded">
-      {/* Stats */}
+      {/* Stats */}`
       <div
         className="grid-4"
         style={{
@@ -66,7 +110,6 @@ export default function PaymentsPage() {
           sub={`${stats.partialPaid} partial · ${stats.unpaid} unpaid`}
         />
       </div>
-
       {/* Table card */}
       <div
         style={{
@@ -92,6 +135,19 @@ export default function PaymentsPage() {
             Payment records
           </h3>
           <div className="filters-row" style={{ display: "flex", gap: 4 }}>
+            <button
+              onClick={handlePrint}
+              style={{
+                padding: "5px 12px",
+                fontSize: 12,
+                borderRadius: 6,
+                border: "1px solid rgba(0,0,0,0.09)",
+                background: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              Print
+            </button>
             {["All", "Paid", "Partial", "Unpaid"].map((f) => (
               <button
                 key={f}
@@ -115,189 +171,199 @@ export default function PaymentsPage() {
 
         {/* Table */}
         <div style={{ overflowX: "auto" }}>
-        <table className="payments-table" style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
-          <thead>
-            <tr style={{ background: "#F3F2EF" }}>
-              {[
-                "Student",
-                "ID",
-                "Plan",
-                "Total Fee",
-                "Paid",
-                "Remaining",
-                "Status",
-                "Action",
-              ].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    padding: "10px 16px",
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: "#9E9C97",
-                    textAlign: "left",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((s) => {
-              const total = getPlanPrice(s.plan);
-              const paid = s.paidAmount || 0;
-              const remaining = getRemaining(s);
-              const status = getPaymentStatus(s);
-              const payPct = total ? Math.round((paid / total) * 100) : 0;
-
-              return (
-                <tr
-                  key={s.id}
-                  style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
-                >
-                  {/* Student */}
-                  <td data-label="Student" style={{ padding: "12px 16px" }}>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 10 }}
-                    >
-                      <Avatar
-                        initials={s.initials}
-                        color={s.avatar}
-                        size={32}
-                        fontSize={11}
-                      />
-                      <div>
-                        <div
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 500,
-                            color: "#1A1917",
-                          }}
-                        >
-                          {s.name}
-                        </div>
-                        <div style={{ fontSize: 11, color: "#9E9C97" }}>
-                          {s.userID}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* ID */}
-                  <td data-label="ID" style={{ padding: "12px 16px" }}>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontFamily: "JetBrains Mono, monospace",
-                        color: "#6B6860",
-                        background: "#F3F2EF",
-                        padding: "2px 7px",
-                        borderRadius: 4,
-                      }}
-                    >
-                      {s.id}
-                    </span>
-                  </td>
-
-                  {/* Plan */}
-                  <td
-                    data-label="Plan"
+          <table
+            className="payments-table"
+            style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}
+          >
+            <thead>
+              <tr style={{ background: "#F3F2EF" }}>
+                {[
+                  "Student",
+                  "ID",
+                  "Plan",
+                  "Total Fee",
+                  "Paid",
+                  "Remaining",
+                  "Status",
+                  "Action",
+                ].map((h) => (
+                  <th
+                    key={h}
                     style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      color: "#6B6860",
+                      padding: "10px 16px",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: "#9E9C97",
+                      textAlign: "left",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {getPlanLabel(s.plan)}
-                  </td>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((s) => {
+                const total = getPlanPrice(s.plan);
+                const paid = s.paidAmount || 0;
+                const remaining = getRemaining(s);
+                const status = getPaymentStatus(s);
+                const payPct = total ? Math.round((paid / total) * 100) : 0;
 
-                  {/* Total */}
-                  <td
-                    data-label="Total Fee"
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#1A1917",
-                    }}
+                return (
+                  <tr
+                    key={s.id}
+                    style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
                   >
-                    {formatCurrency(total)}
-                  </td>
-
-                  {/* Paid + mini bar */}
-                  <td data-label="Paid" style={{ padding: "12px 16px" }}>
-                    <div
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: "#0F6E56",
-                      }}
-                    >
-                      {formatCurrency(paid)}
-                    </div>
-                    <div
-                      style={{
-                        width: 80,
-                        height: 3,
-                        background: "rgba(0,0,0,0.07)",
-                        borderRadius: 99,
-                        overflow: "hidden",
-                        marginTop: 4,
-                      }}
-                    >
+                    {/* Student */}
+                    <td data-label="Student" style={{ padding: "12px 16px" }}>
                       <div
                         style={{
-                          width: payPct + "%",
-                          height: "100%",
-                          background: status === "paid" ? "#1D9E75" : "#EF9F27",
-                          borderRadius: 99,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10,
                         }}
-                      />
-                    </div>
-                  </td>
-
-                  {/* Remaining */}
-                  <td
-                    data-label="Remaining"
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: remaining > 0 ? "#A32D2D" : "#0F6E56",
-                    }}
-                  >
-                    {formatCurrency(remaining)}
-                  </td>
-
-                  {/* Status badge */}
-                  <td data-label="Status" style={{ padding: "12px 16px" }}>
-                    <PaymentBadge status={status} />
-                  </td>
-
-                  {/* Action */}
-                  <td data-label="Action" style={{ padding: "12px 16px" }}>
-                    {status !== "paid" ? (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => setPayTarget(s)}
                       >
-                        Add payment
-                      </Button>
-                    ) : (
-                      <span style={{ fontSize: 11, color: "#9E9C97" }}>—</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        <Avatar
+                          initials={s.initials}
+                          color={s.avatar}
+                          size={32}
+                          fontSize={11}
+                        />
+                        <div>
+                          <div
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 500,
+                              color: "#1A1917",
+                            }}
+                          >
+                            {s.name}
+                          </div>
+                          <div style={{ fontSize: 11, color: "#9E9C97" }}>
+                            {s.userID}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* ID */}
+                    <td data-label="ID" style={{ padding: "12px 16px" }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontFamily: "JetBrains Mono, monospace",
+                          color: "#6B6860",
+                          background: "#F3F2EF",
+                          padding: "2px 7px",
+                          borderRadius: 4,
+                        }}
+                      >
+                        {s.id}
+                      </span>
+                    </td>
+
+                    {/* Plan */}
+                    <td
+                      data-label="Plan"
+                      style={{
+                        padding: "12px 16px",
+                        fontSize: 12,
+                        color: "#6B6860",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {getPlanLabel(s.plan)}
+                    </td>
+
+                    {/* Total */}
+                    <td
+                      data-label="Total Fee"
+                      style={{
+                        padding: "12px 16px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#1A1917",
+                      }}
+                    >
+                      {formatCurrency(total)}
+                    </td>
+
+                    {/* Paid + mini bar */}
+                    <td data-label="Paid" style={{ padding: "12px 16px" }}>
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: "#0F6E56",
+                        }}
+                      >
+                        {formatCurrency(paid)}
+                      </div>
+                      <div
+                        style={{
+                          width: 80,
+                          height: 3,
+                          background: "rgba(0,0,0,0.07)",
+                          borderRadius: 99,
+                          overflow: "hidden",
+                          marginTop: 4,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: payPct + "%",
+                            height: "100%",
+                            background:
+                              status === "paid" ? "#1D9E75" : "#EF9F27",
+                            borderRadius: 99,
+                          }}
+                        />
+                      </div>
+                    </td>
+
+                    {/* Remaining */}
+                    <td
+                      data-label="Remaining"
+                      style={{
+                        padding: "12px 16px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: remaining > 0 ? "#A32D2D" : "#0F6E56",
+                      }}
+                    >
+                      {formatCurrency(remaining)}
+                    </td>
+
+                    {/* Status badge */}
+                    <td data-label="Status" style={{ padding: "12px 16px" }}>
+                      <PaymentBadge status={status} />
+                    </td>
+
+                    {/* Action */}
+                    <td data-label="Action" style={{ padding: "12px 16px" }}>
+                      {status !== "paid" ? (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={() => setPayTarget(s)}
+                        >
+                          Add payment
+                        </Button>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#9E9C97" }}>
+                          —
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
         {filtered.length === 0 && (
@@ -313,7 +379,6 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
-
       {payTarget && (
         <AddPaymentModal
           student={payTarget}
