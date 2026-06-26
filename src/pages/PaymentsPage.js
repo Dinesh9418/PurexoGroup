@@ -7,6 +7,7 @@ import {
   formatCurrency,
   // formatDate,
   PaymentBadge,
+  UserStatusBadge,
 } from "../utils/helpers";
 import Button from "../components/common/Button";
 import StatCard from "../components/common/StatCard";
@@ -43,18 +44,22 @@ export default function PaymentsPage() {
       const paid = s.paidAmount || 0;
       const remaining = getRemaining(s);
       const status = getPaymentStatus(s);
+      const UserStatus = s.status; // Assuming 'status' is the property that holds the user's status
 
       return {
-         ID: s.id,
+        UserStatus: s.status,
+        ID: s.id,
         Name: s.name,
         Plan: getPlanLabel(s.plan),
         "Total Fee": total,
         Paid: paid,
+        "Payment Mode": status,
         Remaining: remaining,
         Status: status,
       };
     });
 
+    console.log("Data prepared for Excel export:", data);
     const today = new Date();
     const formattedDate = today
       .toLocaleDateString("en-IN", {
@@ -77,6 +82,8 @@ export default function PaymentsPage() {
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `PaymentRecords-${formattedDate}.xlsx`);
   }
+
+  console.log("Stats in PaymentsPage:", stats);
   return (
     <div className="page-padded">
       {/* Stats */}`
@@ -186,10 +193,11 @@ export default function PaymentsPage() {
                   "Student",
                   "ID",
                   "Plan",
-                  "Total Fee",
+                  // "Total Fee",
                   "Paid",
                   "Remaining",
                   "Status",
+                  "User Status",
                   "Action",
                 ].map((h) => (
                   <th
@@ -217,11 +225,21 @@ export default function PaymentsPage() {
                 const remaining = getRemaining(s);
                 const status = getPaymentStatus(s);
                 const payPct = total ? Math.round((paid / total) * 100) : 0;
+                const UserStatus = s.status; // Assuming 'status' is the property that holds the user's status
+                console.log(
+                  `Student: ${s.name}, UserStatus: ${UserStatus}, PaymentStatus: ${status}`,
+                );
 
                 return (
+                  // {UserStatus === "active" ? (<>
                   <tr
                     key={s.id}
-                    style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
+                    // style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}
+                    style={{
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      background:
+                        s.status === "inactive" ? "#e58b8b" : "transparent",
+                    }}
                   >
                     {/* Student */}
                     <td data-label="Student" style={{ padding: "12px 16px" }}>
@@ -254,7 +272,6 @@ export default function PaymentsPage() {
                         </div>
                       </div>
                     </td>
-
                     {/* ID */}
                     <td data-label="ID" style={{ padding: "12px 16px" }}>
                       <span
@@ -270,7 +287,6 @@ export default function PaymentsPage() {
                         {s.id}
                       </span>
                     </td>
-
                     {/* Plan */}
                     <td
                       data-label="Plan"
@@ -283,9 +299,8 @@ export default function PaymentsPage() {
                     >
                       {getPlanLabel(s.plan)}
                     </td>
-
                     {/* Total */}
-                    <td
+                    {/* <td
                       data-label="Total Fee"
                       style={{
                         padding: "12px 16px",
@@ -295,8 +310,7 @@ export default function PaymentsPage() {
                       }}
                     >
                       {formatCurrency(total)}
-                    </td>
-
+                    </td> */}
                     {/* Paid + mini bar */}
                     <td data-label="Paid" style={{ padding: "12px 16px" }}>
                       <div
@@ -329,7 +343,6 @@ export default function PaymentsPage() {
                         />
                       </div>
                     </td>
-
                     {/* Remaining */}
                     <td
                       data-label="Remaining"
@@ -342,14 +355,21 @@ export default function PaymentsPage() {
                     >
                       {formatCurrency(remaining)}
                     </td>
-
                     {/* Status badge */}
                     <td data-label="Status" style={{ padding: "12px 16px" }}>
                       <PaymentBadge status={status} />
                     </td>
 
+                    {/* User status badge */}
+                    <td data-label="Status" style={{ padding: "12px 16px" }}>
+                      <UserStatusBadge status={UserStatus} />
+                    </td>
+
                     {/* Action */}
-                    <td data-label="Action" style={{ padding: "12px 16px" }}>
+                    <td
+                      data-label="Action"
+                      style={{ padding: "5px", fontSize: 8 }}
+                    >
                       {status !== "paid" ? (
                         <Button
                           size="sm"
@@ -359,12 +379,11 @@ export default function PaymentsPage() {
                           Add payment
                         </Button>
                       ) : (
-                        <span style={{ fontSize: 11, color: "#9E9C97" }}>
-                          —
-                        </span>
+                        <span style={{ fontSize: 9, color: "#9E9C97" }}>—</span>
                       )}
                     </td>
                   </tr>
+                  // </>) : null}
                 );
               })}
             </tbody>
