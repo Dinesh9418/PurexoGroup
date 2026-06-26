@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -44,7 +43,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => signOut(auth);
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
+
+  // 🕒 Auto logout after 5 minutes of inactivity
+  useEffect(() => {
+    let timer;
+
+    const resetTimer = () => {
+      if (timer) clearTimeout(timer);
+      // 5 minutes = 300000 ms
+      timer = setTimeout(() => {
+        logout();
+        alert("You have been logged out due to inactivity.");
+      }, 100000);
+    };
+
+    // Listen for user activity
+    window.addEventListener("mousemove", resetTimer);
+    window.addEventListener("keydown", resetTimer);
+    window.addEventListener("click", resetTimer);
+
+    // Start timer initially
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("mousemove", resetTimer);
+      window.removeEventListener("keydown", resetTimer);
+      window.removeEventListener("click", resetTimer);
+    };
+  }, [user]);
 
   return (
     <AuthContext.Provider
