@@ -44,7 +44,7 @@ export default function PaymentsPage() {
       const paid = s.paidAmount || 0;
       const remaining = getRemaining(s);
       const status = getPaymentStatus(s);
-      const UserStatus = s.status; // Assuming 'status' is the property that holds the user's status
+      // const UserStatus = s.status; // Assuming 'status' is the property that holds the user's status
 
       return {
         UserStatus: s.status,
@@ -55,11 +55,10 @@ export default function PaymentsPage() {
         Paid: paid,
         "Payment Mode": status,
         Remaining: remaining,
-        Status: status,
+        "Payment Status": status,
       };
     });
 
-    console.log("Data prepared for Excel export:", data);
     const today = new Date();
     const formattedDate = today
       .toLocaleDateString("en-IN", {
@@ -196,7 +195,7 @@ export default function PaymentsPage() {
                   // "Total Fee",
                   "Paid",
                   "Remaining",
-                  "Status",
+                  "Payment Status",
                   "User Status",
                   "Action",
                 ].map((h) => (
