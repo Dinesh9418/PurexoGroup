@@ -32,17 +32,23 @@ export default function StudentDetail({ student }) {
     return (
       <div
         style={{
-          flex: 1,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          minHeight: 300,
           color: "#9E9C97",
           fontSize: 13,
+          background: "#fff",
+          borderRadius: 14,
+          border: "1px solid rgba(0,0,0,0.08)",
         }}
       >
-        Select a student to view details hjhsjhj
+        ← Select a student to view details
       </div>
     );
+
+  // ── All CRUD uses student.id (MSS-XXXX), the human-readable unique field ──
+  const sid = student.id;
 
   const daysLeft = getDaysLeft(student.endDate);
   const isInactive = student.status === "inactive";
@@ -59,12 +65,10 @@ export default function StudentDetail({ student }) {
   return (
     <div
       style={{
-        flex: 1,
         background: "#FFFFFF",
         border: "1px solid rgba(0,0,0,0.08)",
         borderRadius: 14,
-        padding: "24px",
-        overflowY: "auto",
+        padding: "22px",
       }}
     >
       {/* ── Header ── */}
@@ -72,21 +76,21 @@ export default function StudentDetail({ student }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 16,
-          marginBottom: 24,
-          paddingBottom: 20,
+          gap: 14,
+          flexWrap: "wrap",
+          marginBottom: 20,
+          paddingBottom: 18,
           borderBottom: "1px solid rgba(0,0,0,0.07)",
         }}
       >
         <Avatar
           initials={student.initials}
           color={student.avatar}
-          size={56}
-          fontSize={18}
+          size={52}
+          fontSize={17}
         />
-
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 18, fontWeight: 600, color: "#1A1917" }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: "#1A1917" }}>
             {student.name}
           </div>
           <div
@@ -94,12 +98,14 @@ export default function StudentDetail({ student }) {
               display: "flex",
               alignItems: "center",
               gap: 8,
-              marginTop: 4,
+              marginTop: 5,
+              flexWrap: "wrap",
             }}
           >
+            {/* Show the unique MSS-XXXX id */}
             <span
               style={{
-                fontSize: 12,
+                fontSize: 11,
                 fontFamily: "JetBrains Mono, monospace",
                 color: "#6B6860",
                 background: "#F3F2EF",
@@ -107,21 +113,43 @@ export default function StudentDetail({ student }) {
                 borderRadius: 5,
               }}
             >
-              {student.userID}
+              {sid}
             </span>
-            {/* <span style={{ fontSize: 11, color: "#9E9C97" }}>
-              {student.room}
-            </span> */}
+            {isInactive && (
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  background: "#F3F2EF",
+                  color: "#6B6860",
+                  padding: "2px 7px",
+                  borderRadius: 5,
+                }}
+              >
+                INACTIVE
+              </span>
+            )}
+            {!isInactive && isExpired && (
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  background: "#FCEBEB",
+                  color: "#A32D2D",
+                  padding: "2px 7px",
+                  borderRadius: 5,
+                }}
+              >
+                EXPIRED
+              </span>
+            )}
           </div>
         </div>
-
-        {/* Edit + Delete buttons */}
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
           <Button
             size="sm"
             variant="secondary"
             onClick={() => setShowEditModal(true)}
-            style={{ display: "flex", alignItems: "center", gap: 5 }}
           >
             ✏️ Edit
           </Button>
@@ -129,8 +157,7 @@ export default function StudentDetail({ student }) {
             size="sm"
             variant="danger"
             onClick={() => {
-              if (window.confirm(`Delete ${student.name}?`))
-                deleteStudent(student.userID);
+              if (window.confirm(`Delete ${student.name}?`)) deleteStudent(sid);
             }}
           >
             🗑 Delete
@@ -138,15 +165,15 @@ export default function StudentDetail({ student }) {
         </div>
       </div>
 
-      {/* ── Renewal / inactive banner ── */}
+      {/* ── Banners ── */}
       {isInactive && (
         <div
           style={{
             background: "#F3F2EF",
             border: "1px solid rgba(0,0,0,0.08)",
             borderRadius: 12,
-            padding: "16px 18px",
-            marginBottom: 20,
+            padding: "14px 16px",
+            marginBottom: 18,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -176,8 +203,8 @@ export default function StudentDetail({ student }) {
             background: "#FCEBEB",
             border: "1px solid #F09595",
             borderRadius: 12,
-            padding: "16px 18px",
-            marginBottom: 20,
+            padding: "14px 16px",
+            marginBottom: 18,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -204,12 +231,8 @@ export default function StudentDetail({ student }) {
             <Button
               variant="danger"
               onClick={() => {
-                if (
-                  window.confirm(
-                    `Mark ${student.name} as left? They'll be moved to inactive — no data is deleted.`,
-                  )
-                )
-                  markStudentLeft(student.userID);
+                if (window.confirm(`Mark ${student.name} as left?`))
+                  markStudentLeft(sid);
               }}
             >
               Mark as left
@@ -227,8 +250,8 @@ export default function StudentDetail({ student }) {
             background: "#FEF3DC",
             border: "1px solid #FAC775",
             borderRadius: 12,
-            padding: "14px 18px",
-            marginBottom: 20,
+            padding: "12px 16px",
+            marginBottom: 18,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -237,8 +260,7 @@ export default function StudentDetail({ student }) {
           }}
         >
           <div style={{ fontSize: 12, color: "#854F0B", fontWeight: 500 }}>
-            Mess period ends in {daysLeft} day{daysLeft === 1 ? "" : "s"} —
-            renew early to avoid a gap
+            ⏱ Mess period ends in {daysLeft} day{daysLeft === 1 ? "" : "s"}
           </div>
           <Button
             size="sm"
@@ -257,7 +279,7 @@ export default function StudentDetail({ student }) {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: 10,
-          marginBottom: 20,
+          marginBottom: 18,
         }}
       >
         {[
@@ -273,13 +295,20 @@ export default function StudentDetail({ student }) {
             style={{
               background: "#F3F2EF",
               borderRadius: 10,
-              padding: "10px 14px",
+              padding: "10px 13px",
             }}
           >
             <div style={{ fontSize: 11, color: "#9E9C97", marginBottom: 3 }}>
               {item.label}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#1A1917" }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#1A1917",
+                wordBreak: "break-word",
+              }}
+            >
               {item.value}
             </div>
           </div>
@@ -287,7 +316,7 @@ export default function StudentDetail({ student }) {
       </div>
 
       {/* ── Duration bar ── */}
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 18 }}>
         <div
           style={{
             display: "flex",
@@ -332,13 +361,13 @@ export default function StudentDetail({ student }) {
         </div>
       </div>
 
-      {/* ── Payment section ── */}
+      {/* ── Payment ── */}
       <div
         style={{
           border: "1px solid rgba(0,0,0,0.08)",
           borderRadius: 12,
-          padding: "18px",
-          marginBottom: 20,
+          padding: "16px",
+          marginBottom: 18,
         }}
       >
         <div
@@ -346,7 +375,7 @@ export default function StudentDetail({ student }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            marginBottom: 14,
+            marginBottom: 12,
           }}
         >
           <div style={{ fontSize: 13, fontWeight: 600, color: "#1A1917" }}>
@@ -354,15 +383,13 @@ export default function StudentDetail({ student }) {
           </div>
           <PaymentBadge status={status} />
         </div>
-
-        {/* Progress bar */}
-        <div style={{ marginBottom: 14 }}>
+        <div style={{ marginBottom: 12 }}>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               fontSize: 12,
-              marginBottom: 6,
+              marginBottom: 5,
             }}
           >
             <span style={{ color: "#6B6860" }}>
@@ -379,7 +406,7 @@ export default function StudentDetail({ student }) {
           </div>
           <div
             style={{
-              height: 10,
+              height: 9,
               background: "rgba(0,0,0,0.07)",
               borderRadius: 99,
               overflow: "hidden",
@@ -396,21 +423,20 @@ export default function StudentDetail({ student }) {
             />
           </div>
         </div>
-
         <div
           className="form-grid-2"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 10,
-            marginBottom: 14,
+            marginBottom: 12,
           }}
         >
           <div
             style={{
               background: "#E1F5EE",
               borderRadius: 8,
-              padding: "10px 14px",
+              padding: "10px 13px",
             }}
           >
             <div style={{ fontSize: 11, color: "#0F6E56", marginBottom: 2 }}>
@@ -424,7 +450,7 @@ export default function StudentDetail({ student }) {
             style={{
               background: remaining > 0 ? "#FCEBEB" : "#E1F5EE",
               borderRadius: 8,
-              padding: "10px 14px",
+              padding: "10px 13px",
             }}
           >
             <div
@@ -447,7 +473,6 @@ export default function StudentDetail({ student }) {
             </div>
           </div>
         </div>
-
         {remaining > 0 && (
           <Button
             variant="primary"
@@ -457,10 +482,8 @@ export default function StudentDetail({ student }) {
             + Add payment
           </Button>
         )}
-
-        {/* Payment history */}
         {student.paymentHistory && student.paymentHistory.length > 0 && (
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: 14 }}>
             <div
               style={{
                 fontSize: 11,
@@ -478,9 +501,9 @@ export default function StudentDetail({ student }) {
                 key={i}
                 style={{
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "8px 0",
+                  alignItems: "center",
+                  padding: "7px 0",
                   borderBottom: "1px solid rgba(0,0,0,0.05)",
                 }}
               >
@@ -523,18 +546,18 @@ export default function StudentDetail({ student }) {
         >
           Biometric access
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div
             style={{
-              width: 64,
-              height: 64,
+              width: 58,
+              height: 58,
               borderRadius: 12,
               flexShrink: 0,
               background: student.bioRegistered ? "#E1F5EE" : "#F3F2EF",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 28,
+              fontSize: 26,
             }}
           >
             ❋
@@ -559,7 +582,7 @@ export default function StudentDetail({ student }) {
                   <Button
                     size="sm"
                     variant="danger"
-                    onClick={() => removeBiometric(student.id)}
+                    onClick={() => removeBiometric(sid)}
                   >
                     Remove
                   </Button>
@@ -568,7 +591,7 @@ export default function StudentDetail({ student }) {
                 <Button
                   size="sm"
                   variant="primary"
-                  onClick={() => registerBiometric(student.id)}
+                  onClick={() => registerBiometric(sid)}
                 >
                   Enroll fingerprint
                 </Button>
@@ -578,7 +601,7 @@ export default function StudentDetail({ student }) {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Modals — all pass student object; they use student.id internally */}
       {showPayModal && (
         <AddPaymentModal
           student={student}
