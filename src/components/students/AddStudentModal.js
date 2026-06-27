@@ -15,10 +15,11 @@ export default function AddStudentModal({ onClose }) {
   const { addStudent } = useMessContext();
   const todayStr = toStr(new Date());
   const endStr = toStr(addDays(new Date(), 30));
+  const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
-    userID: "",
+    id: "",
     plan: "both",
     phone: "",
     email: "",
@@ -61,16 +62,16 @@ export default function AddStudentModal({ onClose }) {
     display: "block",
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (saving) return;
     if (!form.name.trim()) {
       alert("Student name is required");
       return;
     }
-    // if (!form.userID.trim()) {
-    //   alert("User ID is required");
-    //   return;
-    // }
-    addStudent(form);
+    setSaving(true);
+    console.log("Sending data:", form);
+    await addStudent(form);
+    setSaving(false);
     onClose();
   };
 
@@ -78,7 +79,8 @@ export default function AddStudentModal({ onClose }) {
     <Modal title="Add new student" onClose={onClose}>
       <div style={{ display: "grid", gap: 14 }}>
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Full name *</label>
@@ -115,7 +117,8 @@ export default function AddStudentModal({ onClose }) {
         </div>
 
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Phone</label>
@@ -139,7 +142,8 @@ export default function AddStudentModal({ onClose }) {
 
         {/* Date row */}
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Start date</label>
@@ -196,8 +200,8 @@ export default function AddStudentModal({ onClose }) {
           }}
         >
           <Button onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Add student
+          <Button variant="primary" onClick={handleSubmit} disabled={saving}>
+            {saving ? "Adding..." : "Add student"}
           </Button>
         </div>
       </div>

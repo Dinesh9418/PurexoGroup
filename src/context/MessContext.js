@@ -96,35 +96,32 @@ export const MessProvider = ({ children }) => {
 
   // ADD STUDENT
   const addStudent = async (student) => {
-    const initials = student.name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-    const avatars = ["teal", "blue", "coral", "purple", "amber"];
-    const avatar = avatars[students.length % avatars.length];
-    const start = student.startDate ? new Date(student.startDate) : new Date();
-    const newId = `MSS-${2600 + students.length + 1}`;
+    try {
+      // Generate MSS-2601, MSS-2602...
+      const nextId = `MSS-${2600 + students.length + 1}`;
 
-    const data = {
-      ...student,
-      id: newId,
-      initials,
-      avatar,
-      bioRegistered: false,
-      paidAmount: 0,
-      paymentHistory: [],
-      cycleHistory: [],
-      status: "active",
-      startDate: toStr(start),
-      endDate: toStr(addDays(start, 30)),
-      createdAt: serverTimestamp(),
-    };
+      const data = {
+        ...student,
 
-    await addDoc(collection(db, "students"), data);
+        // your custom user id
+        userID: nextId,
+
+        createdAt: serverTimestamp(),
+
+        paidAmount: 0,
+        paymentHistory: [],
+        cycleHistory: [],
+        bioRegistered: false,
+        status: "active",
+      };
+
+      const docRef = await addDoc(collection(db, "students"), data);
+
+      console.log("Student created:", docRef.id, "User ID:", nextId);
+    } catch (error) {
+      console.error("Add student error:", error);
+    }
   };
-
   // UPDATE STUDENT  (id = custom MSS-XXXX field)
   const updateStudent = async (id, updates) => {
     const student = students.find((s) => s.id === id);
@@ -238,9 +235,8 @@ export const MessProvider = ({ children }) => {
     inactive: students.filter((s) => !isActive(s)).length,
     fullyPaid: activeStudents.filter((s) => getPaymentStatus(s) === "paid")
       .length,
-    partialPaid: activeStudents.filter(
-      (s) => getPaymentStatus(s) === "partial",
-    ).length,
+    partialPaid: activeStudents.filter((s) => getPaymentStatus(s) === "partial")
+      .length,
     unpaid: activeStudents.filter((s) => getPaymentStatus(s) === "unpaid")
       .length,
     bioRegistered: activeStudents.filter((s) => s.bioRegistered).length,
@@ -252,10 +248,7 @@ export const MessProvider = ({ children }) => {
       (sum, s) => sum + (s.paidAmount || 0),
       0,
     ),
-    pendingRevenue: activeStudents.reduce(
-      (sum, s) => sum + getRemaining(s),
-      0,
-    ),
+    pendingRevenue: activeStudents.reduce((sum, s) => sum + getRemaining(s), 0),
     expiringSoon: activeStudents.filter(
       (s) => getDaysLeft(s.endDate) <= 7 && getDaysLeft(s.endDate) > 0,
     ).length,

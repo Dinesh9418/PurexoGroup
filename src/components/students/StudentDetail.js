@@ -108,7 +108,7 @@ export default function StudentDetail({ student }) {
                 borderRadius: 5,
               }}
             >
-              {student.id}
+              {student.userID}
             </span>
             {/* <span style={{ fontSize: 11, color: "#9E9C97" }}>
               {student.room}
@@ -165,10 +165,7 @@ export default function StudentDetail({ student }) {
                 : "Excluded from active counts, billing, and attendance"}
             </div>
           </div>
-          <Button
-            variant="primary"
-            onClick={() => setShowRenewModal(true)}
-          >
+          <Button variant="primary" onClick={() => setShowRenewModal(true)}>
             Re-activate
           </Button>
         </div>
@@ -193,7 +190,14 @@ export default function StudentDetail({ student }) {
             <div style={{ fontSize: 13, fontWeight: 600, color: "#A32D2D" }}>
               Mess period ended
             </div>
-            <div style={{ fontSize: 12, color: "#A32D2D", marginTop: 2, opacity: 0.85 }}>
+            <div
+              style={{
+                fontSize: 12,
+                color: "#A32D2D",
+                marginTop: 2,
+                opacity: 0.85,
+              }}
+            >
               Ended on {formatDate(student.endDate)}
             </div>
           </div>
@@ -201,16 +205,17 @@ export default function StudentDetail({ student }) {
             <Button
               variant="danger"
               onClick={() => {
-                if (window.confirm(`Mark ${student.name} as left? They'll be moved to inactive — no data is deleted.`))
+                if (
+                  window.confirm(
+                    `Mark ${student.name} as left? They'll be moved to inactive — no data is deleted.`,
+                  )
+                )
                   markStudentLeft(student.id);
               }}
             >
               Mark as left
             </Button>
-            <Button
-              variant="primary"
-              onClick={() => setShowRenewModal(true)}
-            >
+            <Button variant="primary" onClick={() => setShowRenewModal(true)}>
               Renew mess
             </Button>
           </div>
@@ -233,7 +238,8 @@ export default function StudentDetail({ student }) {
           }}
         >
           <div style={{ fontSize: 12, color: "#854F0B", fontWeight: 500 }}>
-            Mess period ends in {daysLeft} day{daysLeft === 1 ? "" : "s"} — renew early to avoid a gap
+            Mess period ends in {daysLeft} day{daysLeft === 1 ? "" : "s"} —
+            renew early to avoid a gap
           </div>
           <Button
             size="sm"
