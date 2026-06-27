@@ -35,7 +35,6 @@ export default function PaymentsPage() {
     if (filter === "Unpaid") return st === "unpaid";
     return true;
   });
-  console.log("Filtered students for PaymentsPage:", filtered);
 
   function handlePrint() {
     // Prepare data for Excel
@@ -82,7 +81,6 @@ export default function PaymentsPage() {
     saveAs(blob, `PaymentRecords-${formattedDate}.xlsx`);
   }
 
-  console.log("Stats in PaymentsPage:", stats);
   return (
     <div className="page-padded">
       {/* Stats */}`

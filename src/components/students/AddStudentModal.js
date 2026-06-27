@@ -27,7 +27,6 @@ export default function AddStudentModal({ onClose }) {
     endDate: endStr, // auto-calculated, shown read-only
   });
 
-  console.log("AddStudentModal form state:", form);
 
   const set = (k, v) => {
     if (k === "startDate") {
@@ -69,7 +68,6 @@ export default function AddStudentModal({ onClose }) {
       return;
     }
     setSaving(true);
-    console.log("Sending data:", form);
     await addStudent(form);
     setSaving(false);
     onClose();

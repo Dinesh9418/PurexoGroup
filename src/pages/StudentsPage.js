@@ -18,7 +18,7 @@ const FILTERS = [
 
 export default function StudentsPage() {
   const { students, getDaysLeft, getPaymentStatus } = useMessContext();
-  const [selected, setSelected] = useState(students[0]?.id || null);
+  const [selected, setSelected] = useState(students[0]?.userID || null);
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
@@ -50,9 +50,8 @@ export default function StudentsPage() {
                       : true;
     return matchSearch && matchFilter;
   });
-  console.log("Filtered students:", filtered);
-  const selectedStudent = students.find((s) => s.id === selected);
-
+  const selectedStudent = students.find((s) => s.userID === selected);
+  
   return (
     <div
       className="page-padded"
@@ -155,10 +154,10 @@ export default function StudentsPage() {
           ) : (
             filtered.map((s) => (
               <StudentCard
-                key={s.id}
+                key={s.userID}
                 student={s}
-                selected={s.id === selected}
-                onClick={() => setSelected(s.id)}
+                selected={s.userID === selected}
+                onClick={() => setSelected(s.userID)}
               />
             ))
           )}

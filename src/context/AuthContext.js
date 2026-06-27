@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       timer = setTimeout(() => {
         logout();
         alert("You have been logged out due to inactivity.");
-      }, 500000);
+      },3000000);
     };
 
     // Listen for user activity

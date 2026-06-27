@@ -36,6 +36,7 @@ export default function StudentCard({ student, selected, onClick }) {
         ? "◑ Partial"
         : "✗ Unpaid";
 
+  console.log("Rendering StudentCard for:", student, student.name);
   return (
     <div
       onClick={onClick}
@@ -79,7 +80,7 @@ export default function StudentCard({ student, selected, onClick }) {
               marginTop: 1,
             }}
           >
-            {student.userID}
+            {student.id}
           </div>
         </div>
         {(isInactive || isExpired) && (

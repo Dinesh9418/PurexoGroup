@@ -40,11 +40,10 @@ export default function StudentDetail({ student }) {
           fontSize: 13,
         }}
       >
-        Select a student to view details
+        Select a student to view details hjhsjhj
       </div>
     );
 
-  console.log("Rendering StudentDetail for:", student);
   const daysLeft = getDaysLeft(student.endDate);
   const isInactive = student.status === "inactive";
   const isExpired = !isInactive && daysLeft <= 0;
@@ -131,7 +130,7 @@ export default function StudentDetail({ student }) {
             variant="danger"
             onClick={() => {
               if (window.confirm(`Delete ${student.name}?`))
-                deleteStudent(student.id);
+                deleteStudent(student.userID);
             }}
           >
             🗑 Delete
@@ -210,7 +209,7 @@ export default function StudentDetail({ student }) {
                     `Mark ${student.name} as left? They'll be moved to inactive — no data is deleted.`,
                   )
                 )
-                  markStudentLeft(student.id);
+                  markStudentLeft(student.userID);
               }}
             >
               Mark as left

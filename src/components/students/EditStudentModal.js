@@ -23,7 +23,6 @@ export default function EditStudentModal({ student, onClose }) {
     startDate: student.startDate,
     endDate: student.endDate,
   });
-  console.log("Initial form state:", form);
   const [errors, setErrors] = useState({});
 
   const set = (k, v) => {
