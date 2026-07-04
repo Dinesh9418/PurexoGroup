@@ -58,13 +58,18 @@ export const AuthProvider = ({ children }) => {
       timer = setTimeout(() => {
         logout();
         alert("You have been logged out due to inactivity.");
-      },500000);
+      }, 500000);
     };
 
     // Listen for user activity
     window.addEventListener("mousemove", resetTimer);
     window.addEventListener("keydown", resetTimer);
     window.addEventListener("click", resetTimer);
+
+    // Mobile events
+    window.addEventListener("touchstart", resetTimer);
+    window.addEventListener("touchmove", resetTimer);
+    window.addEventListener("scroll", resetTimer);
 
     // Start timer initially
     resetTimer();
