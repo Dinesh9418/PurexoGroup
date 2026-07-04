@@ -27,7 +27,6 @@ export default function AddStudentModal({ onClose }) {
     endDate: endStr, // auto-calculated, shown read-only
   });
 
-
   const set = (k, v) => {
     if (k === "startDate") {
       // whenever start changes, auto-set end = start + 30 days
@@ -36,6 +35,17 @@ export default function AddStudentModal({ onClose }) {
     } else {
       setForm((p) => ({ ...p, [k]: v }));
     }
+  };
+
+  const inputStyle1 = {
+    width: "205%",
+    padding: "9px 12px",
+    fontSize: 13,
+    border: "1px solid rgba(0,0,0,0.12)",
+    borderRadius: 8,
+    outline: "none",
+    background: "#FAFAF8",
+    color: "#1A1917",
   };
 
   const inputStyle = {
@@ -67,6 +77,10 @@ export default function AddStudentModal({ onClose }) {
       alert("Student name is required");
       return;
     }
+    if (!form.phone.trim()) {
+      alert("Phone number is required");
+      return;
+    }
     setSaving(true);
     await addStudent(form);
     setSaving(false);
@@ -81,9 +95,11 @@ export default function AddStudentModal({ onClose }) {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
-            <label style={labelStyle}>Full name *</label>
+            <label style={labelStyle}>
+              Full name <span style={{ color: "red" }}>*</span>
+            </label>
             <input
-              style={inputStyle}
+              style={inputStyle1}
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
               placeholder="e.g. Arjun Rane"
@@ -102,7 +118,9 @@ export default function AddStudentModal({ onClose }) {
         </div>
 
         <div>
-          <label style={labelStyle}>Meal plan *</label>
+          <label style={labelStyle}>
+            Meal plan <span style={{ color: "red" }}>*</span>
+          </label>
           <select
             style={inputStyle}
             value={form.plan}
@@ -119,12 +137,15 @@ export default function AddStudentModal({ onClose }) {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
-            <label style={labelStyle}>Phone</label>
+            <label style={labelStyle}>
+              Phone <span style={{ color: "red" }}>*</span>
+            </label>
             <input
               style={inputStyle}
               value={form.phone}
               onChange={(e) => set("phone", e.target.value)}
               placeholder="9876543210"
+              required
             />
           </div>
           <div>
@@ -144,7 +165,9 @@ export default function AddStudentModal({ onClose }) {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
-            <label style={labelStyle}>Start date</label>
+            <label style={labelStyle}>
+              Start date <span style={{ color: "red" }}>*</span>
+            </label>
             <input
               type="date"
               style={inputStyle}
