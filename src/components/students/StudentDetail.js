@@ -15,6 +15,7 @@ export default function StudentDetail({ student }) {
   const {
     getPlanLabel,
     getPlanPrice,
+    getCycleFee,
     getDaysLeft,
     getPaymentStatus,
     getRemaining,
@@ -56,7 +57,9 @@ export default function StudentDetail({ student }) {
   const barColor =
     daysLeft <= 3 ? "#E24B4A" : daysLeft <= 7 ? "#EF9F27" : "#1D9E75";
   const barPct = Math.min(100, Math.round(((31 - daysLeft) / 31) * 100));
-  const total = getPlanPrice(student.plan);
+  const planFee = getPlanPrice(student.plan);
+  const carried = student.carriedForward || 0;
+  const total = getCycleFee(student); // planFee + carriedForward
   const paid = student.paidAmount || 0;
   const remaining = getRemaining(student);
   const status = getPaymentStatus(student);
@@ -284,7 +287,13 @@ export default function StudentDetail({ student }) {
       >
         {[
           { label: "Meal plan", value: getPlanLabel(student.plan) },
-          { label: "Monthly fee", value: formatCurrency(total) },
+          {
+            label: "This cycle fee",
+            value:
+              carried > 0
+                ? `${formatCurrency(planFee)} + ₹${carried.toLocaleString("en-IN")} prev = ${formatCurrency(total)}`
+                : formatCurrency(planFee),
+          },
           { label: "Start date", value: formatDate(student.startDate) },
           { label: "End date", value: formatDate(student.endDate) },
           { label: "Phone", value: student.phone || "—" },

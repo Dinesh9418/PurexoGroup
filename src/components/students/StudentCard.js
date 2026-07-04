@@ -3,8 +3,14 @@ import { Avatar, PlanPill, BioDot, formatCurrency } from "../../utils/helpers";
 import { useMessContext } from "../../context/MessContext";
 
 export default function StudentCard({ student, selected, onClick }) {
-  const { getDaysLeft, getPlanPrice, getPaymentStatus, getRemaining } =
-    useMessContext();
+  const {
+    getDaysLeft,
+    getPlanPrice,
+    getCycleFee,
+    getPaymentStatus,
+    getRemaining,
+  } = useMessContext();
+
   const isInactive = student.status === "inactive";
   const daysLeft = getDaysLeft(student.endDate);
   const isExpired = !isInactive && daysLeft <= 0;
@@ -13,7 +19,7 @@ export default function StudentCard({ student, selected, onClick }) {
   const barPct = Math.min(100, Math.round(((31 - daysLeft) / 31) * 100));
   const status = getPaymentStatus(student);
   const remaining = getRemaining(student);
-  const total = getPlanPrice(student.plan);
+  const total = getCycleFee(student); // planFee + carriedForward
   const paid = student.paidAmount || 0;
   const payPct = total ? Math.round((paid / total) * 100) : 0;
 
@@ -36,7 +42,9 @@ export default function StudentCard({ student, selected, onClick }) {
         ? "◑ Partial"
         : "✗ Unpaid";
 
-  console.log("Rendering StudentCard for:", student, student.name);
+  // Display ID: prefer the human-readable id (MSS-XXXX), fall back to _docId
+  const displayId = student.id || student._docId || "—";
+
   return (
     <div
       onClick={onClick}
@@ -50,6 +58,7 @@ export default function StudentCard({ student, selected, onClick }) {
         opacity: isInactive ? 0.6 : 1,
       }}
     >
+      {/* Name + ID row */}
       <div
         style={{
           display: "flex",
@@ -72,6 +81,7 @@ export default function StudentCard({ student, selected, onClick }) {
           >
             {student.name}
           </div>
+          {/* Shows human-readable MSS-XXXX id, NOT userID */}
           <div
             style={{
               fontSize: 10,
@@ -80,7 +90,7 @@ export default function StudentCard({ student, selected, onClick }) {
               marginTop: 1,
             }}
           >
-            {student.id}
+            {displayId}
           </div>
         </div>
         {(isInactive || isExpired) && (
@@ -100,6 +110,7 @@ export default function StudentCard({ student, selected, onClick }) {
         )}
       </div>
 
+      {/* Plan + Bio */}
       <div
         style={{
           display: "flex",
@@ -147,7 +158,7 @@ export default function StudentCard({ student, selected, onClick }) {
         </div>
       </div>
 
-      {/* Payment mini bar */}
+      {/* Payment bar */}
       <div style={{ marginBottom: 10 }}>
         <div
           style={{
@@ -182,6 +193,7 @@ export default function StudentCard({ student, selected, onClick }) {
         </div>
       </div>
 
+      {/* Status badge */}
       <span
         style={{
           background: statusBg,

@@ -23,6 +23,7 @@ export default function EditStudentModal({ student, onClose }) {
     startDate: student.startDate,
     endDate: student.endDate,
   });
+  console.log("Initial form state:", form);
   const [errors, setErrors] = useState({});
 
   const set = (k, v) => {
@@ -113,7 +114,8 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Name + USer ID */}
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Full name *</label>
@@ -161,7 +163,8 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Phone + Email */}
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Phone</label>
@@ -185,7 +188,8 @@ export default function EditStudentModal({ student, onClose }) {
 
         {/* Start + End date */}
         <div
-          className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          className="form-grid-2"
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
         >
           <div>
             <label style={labelStyle}>Start date</label>
