@@ -5,7 +5,7 @@ import { useMessContext } from "../../context/MessContext";
 export default function StudentCard({ student, selected, onClick }) {
   const {
     getDaysLeft,
-    getPlanPrice,
+    // getPlanPrice,
     getCycleFee,
     getPaymentStatus,
     getRemaining,

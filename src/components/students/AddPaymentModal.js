@@ -5,8 +5,7 @@ import { useMessContext } from "../../context/MessContext";
 import { formatCurrency } from "../../utils/helpers";
 
 export default function AddPaymentModal({ student, onClose }) {
-  const { addPayment, getPlanPrice, getCycleFee, getRemaining } =
-    useMessContext();
+  const { addPayment, getCycleFee, getRemaining } = useMessContext();
   const total = getCycleFee(student); // includes any carried forward amount
   const remaining = getRemaining(student);
   const [amount, setAmount] = useState("");

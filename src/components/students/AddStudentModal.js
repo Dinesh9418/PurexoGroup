@@ -58,6 +58,7 @@ export default function AddStudentModal({ onClose }) {
     background: "#FAFAF8",
     color: "#1A1917",
   };
+  
   const readOnlyStyle = {
     ...inputStyle,
     background: "#F3F2EF",
